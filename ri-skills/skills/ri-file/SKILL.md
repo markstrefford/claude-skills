@@ -90,8 +90,19 @@ Accepted
 ## Context
 <What was the situation. Operator-grammar. The decision made sense because of these surrounding facts.>
 
-## Decision
-<What was chosen. State the option taken, not all the alternatives considered.>
+## Decisions in plain terms
+<The lead section. Each decision as one line: the call plus its consequence, in
+operator/architect grammar — never method names, schema fields, or phase slots.
+A single-decision ADR is one line; a multi-decision ADR is one line per decision
+(D1..DN), in the same order as the engineering detail below. This section leads
+so the ADR reads at architect altitude before any code-level detail. Example:
+"Read the shocks already in the config; don't redesign the format - cheap and
+safe, and the real calibrated events finally render as timeline markers.">
+
+## Decision(s)
+<The engineering detail, grounded in the code/data. One ## Decision section for
+a single call, or ### D1..DN subsections for a multi-decision ADR. State what
+was chosen, not every alternative.>
 
 ## Consequences
 <What changes downstream. What this commits us to. What it rules out. What still depends on follow-up.>
@@ -100,7 +111,13 @@ Accepted
 <If meaningful, the options that weren't chosen and why. One paragraph each, no more.>
 ```
 
-The Context, Decision, and Consequences sections are operator-grammar. They explain the trade-off at architect altitude. Implementation detail can sit in the Alternatives section or be omitted entirely.
+The Context, Decisions-in-plain-terms, and Consequences sections are
+operator-grammar — they explain the trade-off at architect altitude. The
+engineering detail lives only in the Decision(s) and Alternatives sections, below
+the plain-terms lead. The plain-terms section is not optional: a decision record
+only a developer can parse has failed at being a record. The test is whether the
+operator, reopening it cold months later, knows what was decided and why without
+reading the engineering detail.
 
 **Runbook updates:**
 
@@ -164,6 +181,7 @@ Hand off to `ri-state` at the end. The newly filed artefacts will appear in the 
 - Never duplicate content already in commit messages, task artefacts, or story specs.
 - Never write an ADR for a trivial decision. ADRs are for choices that affect future work.
 - Never let operator-grammar leak below architect altitude in Context, Decision, or Consequences. Implementation detail belongs in Alternatives or stays out.
+- Never record an ADR's decisions without a plain-terms lead — each decision as call + consequence, one line, operator-grammar, before any engineering detail. A multi-decision ADR (D1..DN) gets one plain-terms line per decision. A decision record only a developer can parse has failed at being a record.
 - Never edit `CLAUDE.md`, `~/.claude/CLAUDE.md`, or any `.ri/config.md` without explicit operator approval. These encode opinions and must sound like the operator.
 - Never put strategy or architecture facts directly in `/docs/` if the originating epic is still in `/work/active/`. Co-locate first, move at epic close.
 - Never edit an artefact's `id` field once written.

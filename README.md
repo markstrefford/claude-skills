@@ -81,38 +81,41 @@ If you don't have Claude Code yet, [install it](https://docs.claude.com/en/docs/
 ### 2. Clone or copy this repo's `skills/` and `agents/` directories
 
 ```bash
-git clone https://github.com/<your-fork>/ri-skills.git
-cd ri-skills
+git clone https://github.com/markstrefford/claude-skills.git
+cd claude-skills
 
+# the distributable set lives under ri-skills/
 # user-level install (recommended)
-cp -r skills/* ~/.claude/skills/
-cp -r agents/* ~/.claude/agents/
+cp -r ri-skills/skills/* ~/.claude/skills/
+cp -r ri-skills/agents/* ~/.claude/agents/
 ```
+
+The repo root also carries a live `sdlc/` instance and `.ri/config.md` — this set is dogfooded on itself. You only need the `ri-skills/` directory to install.
 
 If you want to start with a subset, copy individual skills. Each is self-contained.
 
 ### 3. Add the standing behaviour to `~/.claude/CLAUDE.md`
 
 ```bash
-cat user-claude-md-additions.md >> ~/.claude/CLAUDE.md
+cat ri-skills/user-claude-md-additions.md >> ~/.claude/CLAUDE.md
 ```
 
 This is the always-on layer. Edit it to match how you actually want to be talked to. The defaults are operator-style (consequences over implementation detail) and assume you don't review code line by line.
 
-### 4. (Optional) Route sub-agents to a cheaper model
+### 4. (Optional) Adjust the model pins
 
-The verifier and senior-staff-engineer don't need to run on the most expensive model. Open each sub-agent file and set `model: sonnet` (or `haiku` for the verifier if you want maximum economy):
+Every skill and sub-agent ships with a `model:` pin in its frontmatter, chosen to match the work: cheap models for mechanical verbs (`ri-capture` on haiku), the strongest for judgement-heavy ones (`ri-compile`, `ri-plan` on opus), mid-tier for review (`verifier` on sonnet). This is the main lever on token spend — routing reviews and mechanical work off the top model cuts cost by roughly 5x with no real quality loss.
+
+To change one, edit the `model:` line in the relevant `SKILL.md` or agent file:
 
 ```yaml
 ---
 name: verifier
 description: ...
 tools: Read, Grep, Glob, Bash
-model: sonnet
+model: sonnet   # bump to haiku for maximum economy, or remove to inherit the session model
 ---
 ```
-
-Sub-agent token spend drops by roughly 5x with no real quality loss on most reviews.
 
 ### 5. Initialise per-repo config
 
@@ -121,7 +124,7 @@ In each repo where you want to use the skills:
 ```bash
 cd <your-repo>
 mkdir -p .ri sdlc/raw sdlc/work/active sdlc/work/done sdlc/docs/{decisions,runbooks,strategy,architecture}
-cp /path/to/ri-skills/examples/config-tier-2.md .ri/config.md  # or tier-1 / tier-3
+cp /path/to/claude-skills/ri-skills/examples/config-tier-2.md .ri/config.md  # or tier-1 / tier-3
 ```
 
 Edit `.ri/config.md` to match the repo: project name, tier, stacks, test commands.
@@ -223,7 +226,7 @@ This set is deliberately incomplete. Things that aren't here and the reasons:
 - **`ri-frame`** — loose start for big-shape work without raw material. Useful but most work flows through capture-then-compile. Add later if you find yourself wanting it.
 - **`ri-morning`** — overnight summary skill. Only earns its keep when you're actually running unattended overnight sessions with an orchestrator like NanoClaw.
 - **Cross-repo dashboard** — the "I'm juggling three repos and lost track" view. Genuinely useful but a separate piece of work outside the skill set.
-- **Governance layer with security-reviewer sub-agent** — runs scanners at story close (npm audit, pip-audit, bandit, gitleaks). Required for tier-3 public-deploy work but parked while the core SDLC settles.
+- **Governance layer at story close** — runs checks at story close for tier-3 public-deploy work. Don't build a bespoke security reviewer: Claude Code already ships `/security-review` (reviews pending changes on the branch) and `/code-review` (correctness bugs + cleanups). The governance layer should *orchestrate* those plus dependency/secret scanners (npm audit, pip-audit, bandit, gitleaks) at the gate, not reimplement review. Parked while the core SDLC settles.
 - **Senior-staff-engineer split** — the current sub-agent does both lead-SWE and architect review. Splitting them into two more focused sub-agents would improve signal and let each use the right model.
 
 ## Possible improvements

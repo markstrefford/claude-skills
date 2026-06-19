@@ -146,11 +146,12 @@ Body sections:
 
 1. **Outcome** — one line, operator-grammar. The same line that appears in the epic roadmap.
 2. **Acceptance** — what "done" looks like in operator-readable terms. The operator should be able to look at the result and tell whether acceptance is met.
-3. **Test specification** — engineering grammar is appropriate here. This is the contract for tests-first execute. Name what's tested, expected inputs and outputs (or properties), failure modes that must be caught, boundary conditions. Concrete enough that execute writes tests against it without inventing.
-4. **Implementation notes** — engineering grammar, grounded in the code read at step 2. What modules change, what seams the work crosses, what patterns to follow. Specific enough that execute doesn't reinvent the shape.
-5. **Status** — `active`.
+3. **Decisions in plain terms** — *only when the task embodies a design choice* (a pick between concrete options, not mechanical work). Each choice as one line: the call plus its consequence, operator-grammar. This sits above the engineering detail so the operator understands what was decided and why without reading the test spec or notes. A task that just executes an already-recorded decision (e.g. one made in the story's ADR) names the source instead of restating it. Omit the section entirely for purely mechanical tasks.
+4. **Test specification** — engineering grammar is appropriate here. This is the contract for tests-first execute. Name what's tested, expected inputs and outputs (or properties), failure modes that must be caught, boundary conditions. Concrete enough that execute writes tests against it without inventing.
+5. **Implementation notes** — engineering grammar, grounded in the code read at step 2. What modules change, what seams the work crosses, what patterns to follow. Specific enough that execute doesn't reinvent the shape.
+6. **Status** — `active`.
 
-The Outcome and Acceptance are operator-facing. Test specification and Implementation notes are engineering-facing. Both are allowed in this artefact because Plan is past the operator-grammar-only gate — the operator approves the plan, then doesn't read the engineering parts unless they want to.
+The Outcome, Acceptance, and Decisions-in-plain-terms are operator-facing. Test specification and Implementation notes are engineering-facing. Both are allowed in this artefact because Plan is past the operator-grammar-only gate — the operator approves the plan, then doesn't read the engineering parts unless they want to. The decisions, though, must read at their altitude: a choice explained only in the implementation notes won't make sense to the operator now or in the future.
 
 ## Multi-stack handling
 
@@ -182,6 +183,7 @@ Standard flow plus mandatory senior-staff review. Be especially conservative in 
 - Never plan a story that already has task children without first asking the operator whether to extend, replan, or execute.
 - Never agree something is "missing from this story" without checking the epic roadmap first.
 - Never put engineering grammar in task Outcomes or in the epic roadmap. Those are operator-grammar.
+- Never bury a task's design choice in the implementation notes alone. If the task embodies a decision, it carries a plain-terms call + consequence line above the engineering detail (or names the ADR/story where the decision is already recorded that way).
 - Never skip senior-staff-engineer review on tier-3.
 - Never edit an artefact's `id` field once written.
 - Never plan an epic. Epics are decomposed at compile time. Plan each story individually.

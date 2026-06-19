@@ -212,6 +212,7 @@ Standard flow plus mandatory senior-staff-engineer review. Be especially conserv
 
 - Never write engineering detail (test names, function signatures, schemas, code refs) at compile time. That belongs in Plan, when the story is active and code can be read.
 - Never let engineering jargon leak into operator-facing fields. Status, scope, acceptance, gate notes, roadmap entries — all plain words. If you'd name a function, file, or implementation concept, recast in language the operator would use.
+- Never compile a `decision` artefact without a plain-terms lead — each decision as call + consequence, one line, before any engineering detail (the ADR shape ri-file defines). A story that bundles decisions carries the same plain-terms lines. A record only a developer can parse has failed at being a record.
 - Never confabulate to fill a template section. If the source doesn't ground a claim, leave a placeholder.
 - Never produce an epic without a Roadmap section listing its stories as one-liners in sequence. The roadmap is the epic's reason for being.
 - Never include task one-liners in the epic roadmap at compile time. Tasks don't exist yet — `ri-plan` fills them in under each story when the story is planned.
