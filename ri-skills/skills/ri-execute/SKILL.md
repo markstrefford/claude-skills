@@ -1,6 +1,6 @@
-i---
+---
 name: ri-execute
-description: Execute one or more tasks from the work queue in a Reimagined Industries repo. Triggers on explicit slash command (/ri-execute), task IDs in chat ("do e02-s06-t10 and t11"), or natural language signalling task execution ("go run those tasks", "execute that story", "do these three things in /work/active/"). The skill runs the per-task flow (branch, tests-first when applicable, implement, verify, commit, move to done) and chains across tasks autonomously, pausing only on verifier failure, review-autonomy completion, or genuine ambiguity. Use this skill whenever the operator wants to advance work from /sdlc/work/active/ — don't ask which verb to use, run.
+description: Execute one or more tasks from the work queue in a Reimagined Industries repo. Triggers on explicit slash command (/ri-execute), task IDs in chat ("do e02-s06-t10 and t11"), or natural language signalling task execution ("go run those tasks", "execute that story", "do these three things in /work/active/"). The skill runs the per-task flow (branch, tests-first when applicable, implement, verify, commit, move to done) and chains across tasks autonomously, pausing only on verifier failure, review-autonomy completion, or genuine ambiguity. When the chain closes a story on a repo whose `.ri/config.md` sets `security-gate: required`, it runs a governance gate (`/security-review` and `/code-review`) over the story branch before the story is merge-ready. Use this skill whenever the operator wants to advance work from /sdlc/work/active/ — don't ask which verb to use, run.
 model: opus
 ---
 
@@ -99,6 +99,7 @@ Only these conditions:
 - A `review`-autonomy task completes (operator wants to see it before continuing)
 - An `auto`-autonomy task falls in a constrained category (architecture, interfaces, verifier itself)
 - Genuine ambiguity that can't be resolved by reading the artefact, the repo, or `.ri/config.md`
+- The governance gate blocks at story close (a security finding, or a high-severity correctness bug) — report and stop; the fix is new task work
 
 Everything else runs through. Re-asking the operator about the same chain they already authorised is a failure mode.
 
@@ -122,14 +123,42 @@ Whether the chain finished cleanly or stopped early:
 
 2. Run `ri-state` to regenerate `/sdlc/STATE.md`. STATE will reflect the new OPEN.md count if anything was added.
 
-3. If any architectural decisions, runbook updates, or strategy shifts were touched, hand off to `ri-file`.
+3. **If the chain just completed the last active task of a story, run the governance gate** (see below) before anything else. A story whose tasks are all in `/sdlc/work/done/` is a merge candidate, and the gate decides whether it's merge-ready.
 
-4. Summarise to the operator: tasks completed, tasks pending review, tasks stopped, where the verifier flagged things.
+4. If any architectural decisions, runbook updates, or strategy shifts were touched, hand off to `ri-file`.
+
+5. Summarise to the operator: tasks completed, tasks pending review, tasks stopped, where the verifier flagged things, and the governance gate verdict if it ran.
 
 Keep the summary short. The operator can read the diffs and STATE.md for detail.
 
+## Story close: the governance gate
+
+The per-task verifier checks each task against its own spec. The governance gate is different: it reviews the **whole story** as one change, at the moment it becomes a merge candidate, before it goes near `main`. This is where security and cross-task correctness get caught — problems no single task's verifier could see.
+
+**When it fires.** When the chain moves a story's last active task to `done` (no tasks naming that story as parent remain in `/sdlc/work/active/`) **and** the repo's `.ri/config.md` carries `security-gate: required`. Tier-3 repos set this by default; tier-1 and tier-2 repos that omit it skip the gate. The gate runs once per story close, against the story branch's full diff versus `main` — not per task.
+
+**What it runs.** Two existing Claude Code skills, over the story branch diff:
+
+- `/security-review` — security review of the branch's pending changes (injection, authz, secret handling, unsafe deserialisation, and the like).
+- `/code-review` — correctness bugs and reuse/simplification findings across the accumulated diff.
+
+Add dependency and secret scanners here too if the repo declares them (e.g. `npm audit`, `pip-audit`, `bandit`, `gitleaks`) — the gate orchestrates whatever the config names; it doesn't reimplement review.
+
+**What the verdict means.**
+
+| Finding | Disposition |
+| --- | --- |
+| Security finding (any severity) on a `security-gate: required` repo | **Blocks.** Story is not merge-ready. Report to the operator now. The fix is new task work — hand the finding back to `ri-plan`, or fix in place if trivial and re-run the gate. |
+| High-severity correctness bug from `/code-review` | **Blocks.** Same disposition as above. |
+| Low-severity correctness or cleanup/simplification finding | **Advisory.** Append to `/sdlc/OPEN.md` (operator-grammar, tagged with the story id) and continue. Don't block a story on a cleanup. |
+| Clean | Story is merge-ready. Say so plainly in the summary. Merging is the operator's action — the gate clears the path, it doesn't merge. |
+
+The gate never merges and never marks the story `done` on its own — story-level state and the merge are the operator's call. Its job is to produce a verdict, block when the verdict is load-bearing, and route everything else to the right queue.
+
 ## Hard rules
 
+- Never merge or declare a story merge-ready on a `security-gate: required` repo without running the governance gate at story close
+- Never let the governance gate itself merge a branch or mark a story done — it produces a verdict; the operator merges
 - Never mark a task done without verifier sign-off on tier-2 or tier-3
 - Never write implementation before tests on tier-2 or tier-3 if the spec defines tests
 - Never edit a task's `id` field

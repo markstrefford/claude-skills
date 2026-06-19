@@ -35,7 +35,7 @@ Five principles drove the design:
 | `ri-capture` | Drops unstructured material into `/sdlc/raw/` verbatim. No shaping, no tagging, no frontmatter. |
 | `ri-compile` | Turns raw material into a shaped artefact (epic, story, task, decision, runbook, strategy, architecture, or discard). Operator-grammar only; defers engineering detail to plan. Seeds the epic roadmap. |
 | `ri-plan` | Breaks an active story into grounded tasks. Reads the actual code before writing test specs and implementation notes. Updates the epic roadmap with task one-liners. |
-| `ri-execute` | Runs task chains. Tests first, implementation, verifier, commit, move to done. Handles autonomy levels (attended, review, auto) and multi-stack repos. |
+| `ri-execute` | Runs task chains. Tests first, implementation, verifier, commit, move to done. Handles autonomy levels (attended, review, auto) and multi-stack repos. At story close on a `security-gate: required` repo, runs the governance gate (`/security-review` + `/code-review`) over the story branch. |
 | `ri-file` | Files session outputs back to `/sdlc/docs/` when work produced decisions, runbook updates, strategy shifts, or architecture facts. Refuses filler. |
 | `ri-state` | Regenerates `/sdlc/STATE.md` from filesystem truth. Reads `/sdlc/OPEN.md` for the open question count. |
 | `ri-do` | Tier-1 lite path. No artefact, no verifier, just execute and commit. Refuses tier-3 work without explicit override. |
@@ -174,6 +174,17 @@ The skills auto-trigger from natural language matching their descriptions. You d
 
 Slash commands work too if you prefer explicit: `/ri-compile`, `/ri-execute`, etc.
 
+### The story-close governance gate
+
+On a repo whose `.ri/config.md` carries `security-gate: required` (tier-3 by default), `ri-execute` runs a gate the moment a story's last task lands — before the branch goes near `main`. It reviews the whole story as one change, not task by task:
+
+- `/security-review` and `/code-review` run over the story branch's full diff against `main`.
+- A security finding or a high-severity correctness bug **blocks**: the story isn't merge-ready, you're told now, and the fix becomes new task work (back through `ri-plan`).
+- Cleanups and low-severity findings are **advisory**: logged to `OPEN.md`, tagged with the story id, and the chain continues.
+- A clean run means merge-ready. The gate never merges and never marks the story done — that stays your call.
+
+Drop the `security-gate` line from a repo's config to disable it.
+
 ### Tiers in practice
 
 The default for an unconfigured repo is tier-3 (full rigor). Most repos genuinely sit at tier-2. A few content/glue repos sit at tier-1. Declare honestly. Over-engineering tier-1 work wastes tokens; under-engineering tier-3 work bites you in production.
@@ -226,7 +237,7 @@ This set is deliberately incomplete. Things that aren't here and the reasons:
 - **`ri-frame`** — loose start for big-shape work without raw material. Useful but most work flows through capture-then-compile. Add later if you find yourself wanting it.
 - **`ri-morning`** — overnight summary skill. Only earns its keep when you're actually running unattended overnight sessions with an orchestrator like NanoClaw.
 - **Cross-repo dashboard** — the "I'm juggling three repos and lost track" view. Genuinely useful but a separate piece of work outside the skill set.
-- **Governance layer at story close** — runs checks at story close for tier-3 public-deploy work. Don't build a bespoke security reviewer: Claude Code already ships `/security-review` (reviews pending changes on the branch) and `/code-review` (correctness bugs + cleanups). The governance layer should *orchestrate* those plus dependency/secret scanners (npm audit, pip-audit, bandit, gitleaks) at the gate, not reimplement review. Parked while the core SDLC settles.
+- **Wider governance scanners** — the security gate at story close is now live (see below), orchestrating `/security-review` and `/code-review`. Still parked: wiring repo-declared dependency/secret scanners (npm audit, pip-audit, bandit, gitleaks) into the same gate, and enforcing the `version-pairing` / `public-deploy` invariants rather than just reading them.
 - **Senior-staff-engineer split** — the current sub-agent does both lead-SWE and architect review. Splitting them into two more focused sub-agents would improve signal and let each use the right model.
 
 ## Possible improvements

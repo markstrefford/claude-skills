@@ -10,10 +10,10 @@ stacks:
     path: web
     test: npm test
 
-# Tier-3 invariants (advisory until wired into the governance layer)
+# Tier-3 invariants
 version-pairing: backend/pyproject.toml and backend/version.json carry the same semver; bump together, never let them drift
 public-deploy: true
-security-gate: required before merge
+security-gate: required
 
 # Tier-3 behaviour
 
@@ -34,7 +34,11 @@ How the skills behave at tier-3:
 - ri-do refuses tier-3 work by default; operator must explicitly override
   per-task if they want the lite path
 
-The `version-pairing`, `public-deploy`, and `security-gate` lines are
-repo facts the skills don't enforce yet (the security-reviewer sub-agent
-at story close lives in the parked governance layer). Keep them in
-config so they're documented and ready to wire in.
+`security-gate: required` is live: at story close `ri-execute` runs the
+governance gate (`/security-review` and `/code-review`) over the story
+branch before the story is merge-ready. Drop the line to disable the gate
+for a repo.
+
+`version-pairing` and `public-deploy` are still advisory — repo facts the
+skills read but don't yet enforce. Keep them documented and ready to wire
+in.

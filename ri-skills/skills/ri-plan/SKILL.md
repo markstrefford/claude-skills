@@ -1,4 +1,4 @@
-[200~---
+---
 name: ri-plan
 description: Plan an active story by breaking it into a grounded task sequence. Reads the actual code the story touches before writing any task specs, then produces task artefacts with outcomes, acceptance criteria, test specifications, and implementation notes. Also updates the epic's roadmap with the task one-liners under this story. Triggers on explicit slash command (/ri-plan), references to a specific story ("plan the marketerbot story", "/ri-plan e02-s06"), or natural language signalling readiness to break a story into tasks ("ready to plan", "let's get tasks for this story", "what's the breakdown"). Use this skill whenever a story needs decomposing into tasks before execution. Don't ask which verb to use, run.
 model: opus
