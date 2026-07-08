@@ -109,16 +109,16 @@ Lands on `main` since this is planning work, not execution. Execution work cuts 
 **If planning surfaced questions that need the operator's judgment but aren't blocking** (deferred architectural decisions, ambiguities the operator can answer later, structural calls best made after seeing the first task execute), append a one-line entry to `/sdlc/OPEN.md` for each:
 
 ```
-- <YYYY-MM-DD> <one-line question with enough context to answer without re-reading the artefact> [<story or task id>]
+- <YYYY-MM-DD> <one-line question with enough context to answer without re-reading the artefact> [<story or task id>] [area: <module(s)>]
 ```
 
 Rules for OPEN.md writes:
 
 - Create the file if it doesn't exist.
-- Append only. Never overwrite or rearrange existing entries.
+- Append only. Never overwrite or rearrange existing entries. (Removing an entry happens only on resolution, and only `ri-file` does that — see its resolution flow.)
 - One question per line.
 - Operator-grammar. The question should be answerable by reading the line alone.
-- Tag with the artefact id so the operator knows which work the question belongs to.
+- Tag with the artefact id so the operator knows which work the question gates, and with an `area:` tag naming the code module(s) the question touches (the stack-relative code unit — Python module/package, JS/React module or component, skill/agent here; list more than one when it spans them). The area tag is what lets the question be surfaced when work later starts on that code.
 
 Questions that block the plan belong in the conversation with the operator now, not in OPEN.md. OPEN.md is for the deferred judgment queue.
 

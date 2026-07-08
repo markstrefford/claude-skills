@@ -185,16 +185,16 @@ Never delete from `/sdlc/raw/` without first producing a compiled artefact that 
 If the compile surfaced questions that need the operator's judgment but aren't blocking (deferred decisions, ambiguities the operator can resolve later, structural calls best made after seeing more), append a one-line entry to `/sdlc/OPEN.md` for each:
 
 ```
-- <YYYY-MM-DD> <one-line question, with enough context that the operator can answer without re-reading the artefact> [<artefact id this relates to>]
+- <YYYY-MM-DD> <one-line question, with enough context that the operator can answer without re-reading the artefact> [<artefact id this relates to>] [area: <module(s)>]
 ```
 
 Rules for OPEN.md writes:
 
 - Create the file if it doesn't exist.
-- Append only. Never overwrite or rearrange existing entries.
+- Append only. Never overwrite or rearrange existing entries. (Removing an entry happens only on resolution, and only `ri-file` does that — see its resolution flow.)
 - One question per line.
 - Operator-grammar. The question should be answerable by reading the line alone.
-- Tag with the artefact id so the operator knows which work the question belongs to.
+- Tag with the artefact id so the operator knows which work the question gates, and with an `area:` tag naming the code module(s) the question touches (the stack-relative code unit — Python module/package, JS/React module or component, skill/agent here; list more than one when it spans them). The area tag is what lets the question be surfaced when work later starts on that code.
 
 Questions that block the current compile step belong in the conversation with the operator now, not in OPEN.md. OPEN.md is for the deferred judgment queue.
 

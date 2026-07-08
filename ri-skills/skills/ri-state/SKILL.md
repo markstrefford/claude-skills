@@ -77,7 +77,7 @@ This skill does not write to `OPEN.md`. Other skills do:
 Each appends a single-line entry to `OPEN.md`:
 
 ```markdown
-- <ISO date> <one-line question, with enough context that the operator can answer without re-reading artefacts> [<artefact id this relates to, if any>]
+- <ISO date> <one-line question, with enough context that the operator can answer without re-reading artefacts> [<artefact id this relates to, if any>] [area: <module(s)>]
 ```
 
 When an open question is resolved, `ri-file` drains it (see its "Resolving an open question" flow): on the operator's call it removes the line and either files a durable resolution as an area-tagged decision, hands a becomes-work answer to `ri-compile`, or deletes a trivial one. `ri-file` is the only skill that removes an entry; the acting skills only append; `ri-state` never touches `OPEN.md`.

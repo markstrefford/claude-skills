@@ -114,14 +114,14 @@ Whether the chain finished cleanly or stopped early:
 1. **If execution surfaced questions that need the operator's judgment but aren't blocking** (deferred design calls, ambiguity the operator should think about, choices that aren't urgent but matter), append a one-line entry to `/sdlc/OPEN.md` for each:
 
    ```
-   - <YYYY-MM-DD> <one-line question with enough context to answer without re-reading> [<task or story id>]
+   - <YYYY-MM-DD> <one-line question with enough context to answer without re-reading> [<task or story id>] [area: <module(s)>]
    ```
 
    Rules for OPEN.md writes:
    - Create the file if it doesn't exist.
-   - Append only. Never overwrite or rearrange existing entries.
+   - Append only. Never overwrite or rearrange existing entries. (Removing an entry happens only on resolution, and only `ri-file` does that — see its resolution flow.)
    - One question per line, operator-grammar.
-   - Tag with the artefact id so the operator knows which work the question belongs to.
+   - Tag with the artefact id so the operator knows which work the question gates, and with an `area:` tag naming the code module(s) the question touches (the stack-relative code unit — Python module/package, JS/React module or component, skill/agent here; list more than one when it spans them). The area tag is what lets the question be surfaced when work later starts on that code.
 
    Questions that stopped the chain (verifier failures, ambiguity that couldn't be resolved) belong in the operator conversation now, not OPEN.md. OPEN.md is for the deferred judgment queue.
 
