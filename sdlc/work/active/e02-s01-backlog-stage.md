@@ -71,4 +71,9 @@ are reviewed at tier-3 rigor even though each is a documentation-level change.
 
 ## Status
 
-Planned into tasks. Ready for execute.
+All four tasks done (t1–t4 in `/work/done/`). Acceptance verified: the backlog
+store exists and is tracked; compile routes to it and drains the capture zone
+per-item; the cursor reads it and offers it as Next; and starting a backlog item
+promotes it to active. Skill copies are in parity (only ri-compile carries the
+unrelated, unmerged epic-numbering divergence, tracked in OPEN). Merge-ready —
+story-close and merge are the operator's call.

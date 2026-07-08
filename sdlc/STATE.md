@@ -7,29 +7,28 @@ updated: 2026-07-08
 
 ## Active focus
 
-`e02-s01-backlog-stage` — the foundation story of the lifecycle-hygiene epic:
-add a backlog work-stage and make compile drain shaped items from the capture
-zone. Planned into four tasks (t1–t4), senior-staff reviewed (NEEDS WORK →
-load-bearing findings applied: backlog exit added as t4, sync landmine defused).
-Ready for execute. Parent epic `e02-sdlc-lifecycle-hygiene` and `e01` remain
-active.
+`e02-s01-backlog-stage` — **complete and merge-ready**. Added the backlog
+work-stage, made compile drain the capture zone per-item, taught the cursor to
+read the backlog, and gave it a defined exit (backlog→active promotion, owned by
+ri-plan). All four tasks in `/work/done/`; skill copies in parity. Merge is the
+operator's call. Parent epic `e02-sdlc-lifecycle-hygiene` and `e01` remain active.
 
-## In flight
-
-- **e02** epic is `active` with a five-story roadmap (s01 backlog stage + drain
-  raw, s02 tighten decisions record, s03 OPEN questions-only + drain on
+- **e02** epic is `active`. s01 (backlog stage) done and merge-ready; s02–s05
+  remain (s02 tighten decisions record, s03 OPEN questions-only + drain on
   resolution, s04 hygiene audit with escalating gate, s05 contextual OPEN
-  surfacing). No story planned yet. Accompanied by two decisions in
-  `docs/decisions/` (`sdlc-store-lifecycle`, `plan-mode-as-pipeline-frontend`).
+  surfacing). Accompanied by two decisions in `docs/decisions/`
+  (`sdlc-store-lifecycle`, `plan-mode-as-pipeline-frontend`).
 - **e01** epic is `active` with a four-story roadmap (s01 gate, s02 auto-progress,
   s03 tier-3 hygiene, s04 publication/README). No story planned yet.
 
 ## Immediate next
 
-- Execute **e02 s01** tasks t1→t4 in sequence (store → compile routes in → cursor
-  reads → promotion exit).
+- Merge **e02 s01** (operator's call), then plan **e02 s02** (tighten the
+  decisions record) — unblocked.
 - Before **e02 s03** and **s04** plan, resolve their two OPEN.md questions (who
   owns OPEN resolution; how the hygiene gate behaves at skill-invoked chain end).
+- Reconcile the install/source drift (merge `feature/ri-compile-epic-numbering`)
+  so the ri-compile numbering paragraph lands in the repo.
 
 ## Blockers
 
