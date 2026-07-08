@@ -2,7 +2,7 @@
 id: e02-s01-t3-state-reads-backlog
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-s01-backlog-stage
 created: 2026-07-08
