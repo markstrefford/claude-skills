@@ -43,6 +43,7 @@ If there's no `/sdlc/work/active/` content, STATE reflects an idle repo. That's 
 **Blockers:** <one line each, or "none">
 
 **Open questions:** <count, e.g. "3 — see OPEN.md"> or <"none">
+**Hygiene:** <count, e.g. "2 flags — see run output"> or <"clean">
 ```
 
 Rules:
@@ -53,6 +54,7 @@ Rules:
 - "Blockers" line lists every blocked artefact in active with its blocker text in one phrase, or says "none."
 - "Next" is derived: the next task in sequence for the active story, or the next story in the epic roadmap if no story is active, or a shaped item from `/sdlc/work/backlog/` if nothing is active.
 - "Open questions" gives a count only, not content. The content lives in `OPEN.md`.
+- "Hygiene" gives the flag count only, not the detail. The flags are listed in the ri-state run output (see the hygiene audit), never expanded into STATE.
 
 If the repo has multiple concurrently active stories (you're juggling work in two lines within one repo), list each on its own line under "Active focus." This is the within-repo cross-line view. The cross-repo view stays parked as the dashboard.
 
@@ -65,6 +67,22 @@ The cursor is derived, not invented. Each line answers a specific question from 
 - **Next:** look at the active story's task sequence, or the active epic's roadmap, and find the next item not yet done. If nothing's queued in active, a shaped item in `/sdlc/work/backlog/` is the likely next pick — name it (starting it promotes it to active). Only if backlog is also empty, write "operator's call" — meaning the queue is empty and the operator picks what comes next.
 - **Blockers:** any artefact in active with `status: blocked`. Each gets one line.
 - **Open questions:** count of items in `OPEN.md`. If `OPEN.md` doesn't exist, write "none."
+- **Hygiene:** count of flags raised by the hygiene audit below. "clean" if none.
+
+## Hygiene audit
+
+After the stores are read and the cursor derived, run a hygiene audit. It is the forcing function that keeps the stores from silting up: it surfaces neglect the operator would otherwise have to remember to look for. Like the cursor, every flag is **derived from the filesystem or git, never invented**.
+
+Flag, with the reason in one phrase each:
+
+- **Stale open question** — an `OPEN.md` entry whose date is older than **30 days** with no update.
+- **Already-decided question (advisory)** — an `OPEN.md` entry whose wording reads as already resolved (a "we decided X" tail that never drained). This is a soft, model-judged signal — report it so it can be drained, but it is **advisory only** and never contributes to the escalation count (t2), so blocking stays reproducible.
+- **Stalled active work** — an artefact in `/sdlc/work/active/` whose most recent commit is older than **2 days**. Judge this from git: `git log -1 --follow -- <artefact path>` on the current branch (the `--follow` keeps the history across the backlog→active `git mv`). Two honesty caveats, stated rather than papered over: an artefact with **no commit history yet** (freshly created or just promoted) is treated as **fresh, not stalled**; and the signal is **relative to the current branch** — ri-state cannot see commits on branches it isn't on, so work developed on an unmerged branch may read as stalled when the audit runs on `main`. Treat the stalled flag as a useful nudge, not a precise truth.
+- **Stale backlog item** — an artefact in `/sdlc/work/backlog/` older than **60 days** (advisory).
+
+Thresholds are named defaults, easy to change: active-stalled **2 days**, open-question-stale **30 days**, backlog-stale **60 days**.
+
+Output: a short **Hygiene** list in this run's output (one line per flag, operator-grammar), and a one-line count in `STATE.md` (`Hygiene: N flags` / `clean`). Never expand the flag list into STATE — the detail lives in the run output. This step only reports; the escalation and source-aware behaviour that can make a direct run block is added in the gate (see the epic's s04 t2).
 
 ## OPEN.md handling
 
