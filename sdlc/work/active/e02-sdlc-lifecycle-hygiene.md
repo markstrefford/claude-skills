@@ -79,6 +79,9 @@ not be re-litigated per story.
   - t1 — add an area tag to the decisions convention and sharpen the bar for what earns a record
   - t2 — retrofit this session's decision records with the area tag
 - s03 — make the open-questions queue hold only live questions: tagged to their work and to the code module they touch, dated, and removed on resolution
+  - t1 — give ri-file a resolution path that escalates the disposition and drains the entry
+  - t2 — raise questions with a module tag and rewrite the queue's convention from append-only to live-only
+  - t3 — retrofit existing queue entries with module tags
 - s04 — add a hygiene audit at state refresh that flags neglect and escalates to a required review at thresholds
 - s05 — surface relevant open questions and decisions automatically when work starts on the code module they touch
 
