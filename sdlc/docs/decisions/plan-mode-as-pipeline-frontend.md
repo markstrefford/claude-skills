@@ -2,6 +2,7 @@
 id: plan-mode-as-pipeline-frontend
 kind: decision
 project: claude-skills
+area: [ri-compile, ri-plan, ri-execute]
 sources: [raw/plan-mode-as-pipeline-front-end.md]
 created: 2026-07-08
 updated: 2026-07-08

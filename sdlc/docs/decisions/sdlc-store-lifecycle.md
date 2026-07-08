@@ -2,6 +2,7 @@
 id: sdlc-store-lifecycle
 kind: decision
 project: claude-skills
+area: [ri-compile, ri-state, ri-plan, ri-execute, ri-file]
 sources: [raw/sdlc-lifecycle-hygiene.md]
 created: 2026-07-08
 updated: 2026-07-08
