@@ -54,6 +54,10 @@ Before writing any artefact content, decide what each piece of raw material shou
 - **addition to existing** — append to an existing artefact, link source
 - **discard** — not worth shaping; the thought has served its purpose
 
+A work item (task, story, or epic) is routed by whether the operator is starting it now: to **active** (`/sdlc/work/active/`) if work begins now, or to **backlog** (`/sdlc/work/backlog/`) if it is shaped but not yet started. Backlog is the home for shaped-but-unstarted work so it neither lingers in the capture zone nor gets forced prematurely into active. A backlog item has a defined way out — starting work on it promotes it to active (owned by `ri-plan`).
+
+**Drain invariant:** every shaped item leaves the capture zone for exactly one home — docs, backlog, active, or discard. Nothing shaped stays in `/sdlc/raw/`. This is per-item: un-shaped captures may still wait in raw for a later pass (the inbox model is preserved); the rule is that no item you have shaped is left behind there.
+
 Present the proposal as:
 
 > Raw file `<path>` → propose **<shape>** because <one-line reason>.
@@ -164,7 +168,7 @@ The senior-staff-engineer cannot rescue a confabulated compile. If the source ma
 
 For each compiled artefact:
 
-1. Write the artefact to its correct location (`/sdlc/work/active/` for work items, `/sdlc/docs/...` for docs)
+1. Write the artefact to its correct location (`/sdlc/work/active/` for work items being started now, `/sdlc/work/backlog/` for shaped-but-unstarted work items, `/sdlc/docs/...` for docs)
 2. Confirm the `sources:` field references the original raw path
 3. Delete the original raw file (only after the artefact is committed)
 
