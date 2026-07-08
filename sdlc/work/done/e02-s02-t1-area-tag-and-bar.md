@@ -2,7 +2,7 @@
 id: e02-s02-t1-area-tag-and-bar
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-s02-decisions-record
 created: 2026-07-08

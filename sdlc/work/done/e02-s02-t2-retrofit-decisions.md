@@ -2,7 +2,7 @@
 id: e02-s02-t2-retrofit-decisions
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-s02-decisions-record
 created: 2026-07-08
