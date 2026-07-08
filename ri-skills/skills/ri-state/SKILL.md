@@ -24,8 +24,9 @@ Before writing anything, gather the truth from the filesystem:
 1. List `/sdlc/work/active/`. Note every artefact, its `kind`, its `status`.
 2. For any story or epic in active, check whether it has child tasks (look for tasks naming it as `parent:`).
 3. For any story with tasks, note how many are `active` versus `done`, and which are blocked (`status: blocked` carries a `blocker:` field).
-4. Find the most recently moved item in `/sdlc/work/done/` (highest `updated:` field). This is the "last completed" candidate.
-5. Read `/sdlc/OPEN.md` if it exists. Count its open items. Do not transcribe their content into STATE.
+4. List `/sdlc/work/backlog/`. Note the shaped-but-unstarted items — these are candidates for "Next" when nothing is in flight, not work in progress.
+5. Find the most recently moved item in `/sdlc/work/done/` (highest `updated:` field). This is the "last completed" candidate.
+6. Read `/sdlc/OPEN.md` if it exists. Count its open items. Do not transcribe their content into STATE.
 
 If there's no `/sdlc/work/active/` content, STATE reflects an idle repo. That's a valid state, not an error.
 
@@ -50,7 +51,7 @@ Rules:
 - Operator-grammar throughout. The one-liners use the same language as the epic roadmap entries — not method names, file paths, or test names.
 - Under 30 lines. If you'd write more, you're putting detail in the wrong file.
 - "Blockers" line lists every blocked artefact in active with its blocker text in one phrase, or says "none."
-- "Next" is derived: the next task in sequence for the active story, or the next story in the epic roadmap if no story is active.
+- "Next" is derived: the next task in sequence for the active story, or the next story in the epic roadmap if no story is active, or a shaped item from `/sdlc/work/backlog/` if nothing is active.
 - "Open questions" gives a count only, not content. The content lives in `OPEN.md`.
 
 If the repo has multiple concurrently active stories (you're juggling work in two lines within one repo), list each on its own line under "Active focus." This is the within-repo cross-line view. The cross-repo view stays parked as the dashboard.
@@ -61,7 +62,7 @@ The cursor is derived, not invented. Each line answers a specific question from 
 
 - **Active focus:** the story or task whose `status: active` was most recently updated. If multiple, list all currently active.
 - **Last completed:** the most recently moved artefact in `/sdlc/work/done/`.
-- **Next:** look at the active story's task sequence, or the active epic's roadmap, and find the next item not yet done. If nothing's queued, write "operator's call" — meaning the queue is empty and the operator picks what comes next.
+- **Next:** look at the active story's task sequence, or the active epic's roadmap, and find the next item not yet done. If nothing's queued in active, a shaped item in `/sdlc/work/backlog/` is the likely next pick — name it (starting it promotes it to active). Only if backlog is also empty, write "operator's call" — meaning the queue is empty and the operator picks what comes next.
 - **Blockers:** any artefact in active with `status: blocked`. Each gets one line.
 - **Open questions:** count of items in `OPEN.md`. If `OPEN.md` doesn't exist, write "none."
 
