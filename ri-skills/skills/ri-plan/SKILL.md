@@ -34,7 +34,7 @@ If the config is missing, default to tier-3 and warn the operator.
 
 ### 1. Read the story and its surroundings
 
-Open the story artefact. Confirm:
+Open the story artefact. If it lives in `/sdlc/work/backlog/`, promote it first: move the file to `/sdlc/work/active/` (refresh its `updated:` date). Planning a story is the moment work on it starts, so this is where the backlog→active exit is owned — a story is promoted once, when it is planned. Then confirm:
 
 - `kind: story`
 - `status: active`

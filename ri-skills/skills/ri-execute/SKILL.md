@@ -44,6 +44,8 @@ Open the task file. Confirm:
 
 If status is `blocked`, stop the chain. Report which task is blocked and the blocker text. If the test spec is missing on a tier-2 or tier-3 task, stop the chain and tell the operator the task needs Plan-time work first.
 
+Execute advances items in `/sdlc/work/active/` only. If pointed at an item still in `/sdlc/work/backlog/`, promote it to active first (starting a backlog item is its defined exit); if that item is a story or epic with no tasks yet, hand off to `ri-plan` rather than executing it in place. Planning is the primary promotion owner — this is the safety net.
+
 ### 2. Resolve the effective tier and autonomy
 
 Tier resolution: task's `tier:` field if set, otherwise parent story's, otherwise repo default.
@@ -85,6 +87,8 @@ Tier-1 skips the verifier unless the task involves anything load-bearing (auth, 
 | `auto` | Commit, set `status: done`, move file to `/sdlc/work/done/`, continue chain | Stop, report, leave task active |
 
 Commit message format: `<task-id>: <one-line outcome from the task spec>`. Reference the task id always.
+
+**Moving the file to `/sdlc/work/done/`:** use `git mv` only when the task file is already tracked. If it reports `fatal: not under version control` (a task file created this session and never committed), fall back to plain `mv` and stage the result with `git add -A`. Never let the move step fail the chain — the move is bookkeeping, not work.
 
 ### 8. Move to the next task
 
