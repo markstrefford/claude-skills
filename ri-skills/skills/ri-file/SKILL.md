@@ -55,7 +55,7 @@ Filler outputs to refuse:
 
 Before generating any content, list what you'd file and where:
 
-> - Architectural decision → `/sdlc/docs/decisions/<NNNN-slug>.md` because <one-line reason>
+> - Architectural decision → `/sdlc/docs/decisions/<slug>.md` because <one-line reason>
 > - Runbook update → `/sdlc/docs/runbooks/<existing-name>.md` adding section X
 > - Spec divergence → update `/sdlc/work/active/<story-id>.md` outcome from X to Y
 
@@ -69,9 +69,10 @@ For each approved item, generate the right structure:
 
 ```yaml
 ---
-id: <NNNN-slug>           # sequential numeric prefix per repo's docs/decisions/
+id: <slug>                # short descriptive slug, e.g. sdlc-store-lifecycle (no numeric prefix)
 kind: decision
 project: <from config>
+area: [<module(s)>]       # the code module(s) this decision touches, so it can be found by the code it concerns. Stack-relative, module granularity: a Python module/package, a JS/React top-level module or component, or a skill/agent here. List more than one when the decision spans them; go finer than a module (a file) only when the change genuinely is one file. Not an epic-id — epics stack over the same code.
 sources: [<where this came from — task id, story id, raw note, session>]
 created: <today>
 updated: <today>
@@ -179,7 +180,7 @@ Hand off to `ri-state` at the end. The newly filed artefacts will appear in the 
 
 - Never file filler. If nothing was decided, learned, or shifted, write nothing.
 - Never duplicate content already in commit messages, task artefacts, or story specs.
-- Never write an ADR for a trivial decision. ADRs are for choices that affect future work.
+- Never write an ADR for a trivial decision. ADRs are for choices that affect future work — durable, consequential calls. Trivial closes, including a resolved open question that established nothing lasting, die unrecorded rather than becoming filler records.
 - Never let operator-grammar leak below architect altitude in Context, Decision, or Consequences. Implementation detail belongs in Alternatives or stays out.
 - Never record an ADR's decisions without a plain-terms lead — each decision as call + consequence, one line, operator-grammar, before any engineering detail. A multi-decision ADR (D1..DN) gets one plain-terms line per decision. A decision record only a developer can parse has failed at being a record.
 - Never edit `CLAUDE.md`, `~/.claude/CLAUDE.md`, or any `.ri/config.md` without explicit operator approval. These encode opinions and must sound like the operator.
