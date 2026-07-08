@@ -7,26 +7,29 @@ updated: 2026-07-08
 
 ## Active focus
 
-`e02-s01-backlog-stage` — **complete and merge-ready**. Added the backlog
-work-stage, made compile drain the capture zone per-item, taught the cursor to
-read the backlog, and gave it a defined exit (backlog→active promotion, owned by
-ri-plan). All four tasks in `/work/done/`; skill copies in parity. Merge is the
-operator's call. Parent epic `e02-sdlc-lifecycle-hygiene` and `e01` remain active.
+`e02-sdlc-lifecycle-hygiene` — s01 (backlog stage) and s02 (decisions record
+tightening) both **complete and merge-ready**. s02 added the `area` tag defined as
+a stack-relative code-module reference (operator's call: module granularity, not
+epic-id, not concept slug), settled decision ids as descriptive slugs, and folded
+the durability bar into ri-file. All s01/s02 tasks in `/work/done/`; skill copies
+in parity. s03–s05 remain. `e01` also active.
 
-- **e02** epic is `active`. s01 (backlog stage) done and merge-ready; s02–s05
-  remain (s02 tighten decisions record, s03 OPEN questions-only + drain on
-  resolution, s04 hygiene audit with escalating gate, s05 contextual OPEN
-  surfacing). Accompanied by two decisions in `docs/decisions/`
-  (`sdlc-store-lifecycle`, `plan-mode-as-pipeline-frontend`).
+- **e02** epic is `active`. s01 (backlog stage) and s02 (decisions record) done
+  and merge-ready; s03–s05 remain (s03 OPEN questions-only, module-area-tagged +
+  drain on resolution, s04 hygiene audit with escalating gate, s05 contextual
+  surfacing by code module). Two decisions in `docs/decisions/`
+  (`sdlc-store-lifecycle`, `plan-mode-as-pipeline-frontend`), now module-area
+  tagged.
 - **e01** epic is `active` with a four-story roadmap (s01 gate, s02 auto-progress,
   s03 tier-3 hygiene, s04 publication/README). No story planned yet.
 
 ## Immediate next
 
-- Merge **e02 s01** (operator's call), then plan **e02 s02** (tighten the
-  decisions record) — unblocked.
-- Before **e02 s03** and **s04** plan, resolve their two OPEN.md questions (who
-  owns OPEN resolution; how the hygiene gate behaves at skill-invoked chain end).
+- Plan **e02 s03** (OPEN questions-only, module-area-tagged, drained on
+  resolution) — but first resolve its OPEN.md question (who owns OPEN resolution).
+- **s04** also waits on its OPEN.md question (hygiene gate behaviour at
+  skill-invoked chain end). **s05** (surface by module) needs s03's area tags.
+- Merge **e02 s01 + s02** whenever ready (operator's call).
 
 ## Blockers
 

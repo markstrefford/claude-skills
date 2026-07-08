@@ -92,4 +92,9 @@ decisions side and defines it; it does not claim the two stores already share ta
 
 ## Status
 
-Planned into tasks. Ready for execute.
+Both tasks done (t1–t2 in `/work/done/`). Acceptance verified: ri-file now
+requires an `area` tag defined as a stack-relative code-module reference, decision
+ids are descriptive slugs (doc corrected to match practice), the durability bar is
+folded into the existing trivial-ADR rule, and this session's two decision records
+carry module area tags. ri-file canonical == install. Merge-ready — story-close
+and merge are the operator's call.
