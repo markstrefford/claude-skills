@@ -2,7 +2,7 @@
 id: e02-s03-t1-resolution-path
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-s03-open-questions-queue
 created: 2026-07-08

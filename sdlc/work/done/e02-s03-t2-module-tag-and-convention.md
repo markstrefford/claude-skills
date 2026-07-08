@@ -2,7 +2,7 @@
 id: e02-s03-t2-module-tag-and-convention
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-s03-open-questions-queue
 created: 2026-07-08
