@@ -76,9 +76,11 @@ not be re-litigated per story.
   - t3 — teach the cursor to see the backlog and offer it as what to pick up next
   - t4 — give the backlog a defined exit: starting a backlog item promotes it to active
 - s02 — tighten the existing decisions record so it holds only durable calls, area-tagged and dated
-- s03 — make the open-questions queue hold only live questions: tagged to their work, dated, and removed on resolution
+  - t1 — add an area tag to the decisions convention and sharpen the bar for what earns a record
+  - t2 — retrofit this session's decision records with the area tag
+- s03 — make the open-questions queue hold only live questions: tagged to their work and to the code module they touch, dated, and removed on resolution
 - s04 — add a hygiene audit at state refresh that flags neglect and escalates to a required review at thresholds
-- s05 — surface relevant open questions automatically when work starts on the area they touch
+- s05 — surface relevant open questions and decisions automatically when work starts on the code module they touch
 
 ## Status
 
