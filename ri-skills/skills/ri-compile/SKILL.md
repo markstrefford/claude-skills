@@ -198,7 +198,7 @@ Rules for OPEN.md writes:
 
 Questions that block the current compile step belong in the conversation with the operator now, not in OPEN.md. OPEN.md is for the deferred judgment queue.
 
-After OPEN.md (if anything was added), regenerate `/sdlc/STATE.md`. The "Active focus" line probably points at the newly compiled artefact. STATE will reflect the new OPEN.md count.
+After OPEN.md (if anything was added), regenerate `/sdlc/STATE.md`. This is a chain-end handoff — invoke ri-state in `report-only` mode (emit the report-only token) so its hygiene gate reports but never blocks this chain. The "Active focus" line probably points at the newly compiled artefact. STATE will reflect the new OPEN.md count.
 
 ## Tier sensitivity
 

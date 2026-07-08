@@ -122,7 +122,7 @@ Rules for OPEN.md writes:
 
 Questions that block the plan belong in the conversation with the operator now, not in OPEN.md. OPEN.md is for the deferred judgment queue.
 
-Then regenerate `/sdlc/STATE.md`. Active focus points at the story now ready for execute.
+Then regenerate `/sdlc/STATE.md` — a chain-end handoff, so invoke ri-state in `report-only` mode (emit the report-only token) so its hygiene gate reports but never blocks this chain. Active focus points at the story now ready for execute.
 
 ## Task body structure
 

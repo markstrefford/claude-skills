@@ -125,7 +125,7 @@ Whether the chain finished cleanly or stopped early:
 
    Questions that stopped the chain (verifier failures, ambiguity that couldn't be resolved) belong in the operator conversation now, not OPEN.md. OPEN.md is for the deferred judgment queue.
 
-2. Run `ri-state` to regenerate `/sdlc/STATE.md`. STATE will reflect the new OPEN.md count if anything was added.
+2. Run `ri-state` to regenerate `/sdlc/STATE.md` — a chain-end handoff, so invoke it in `report-only` mode (emit the report-only token) so its hygiene gate reports but never blocks the chain (an `auto` run must never stall on a hygiene review). STATE will reflect the new OPEN.md count if anything was added.
 
 3. **If the chain just completed the last active task of a story, run the governance gate** (see below) before anything else. A story whose tasks are all in `/sdlc/work/done/` is a merge candidate, and the gate decides whether it's merge-ready.
 

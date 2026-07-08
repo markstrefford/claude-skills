@@ -82,7 +82,22 @@ Flag, with the reason in one phrase each:
 
 Thresholds are named defaults, easy to change: active-stalled **2 days**, open-question-stale **30 days**, backlog-stale **60 days**.
 
-Output: a short **Hygiene** list in this run's output (one line per flag, operator-grammar), and a one-line count in `STATE.md` (`Hygiene: N flags` / `clean`). Never expand the flag list into STATE — the detail lives in the run output. This step only reports; the escalation and source-aware behaviour that can make a direct run block is added in the gate (see the epic's s04 t2).
+Output: a short **Hygiene** list in this run's output (one line per flag, operator-grammar), and a one-line count in `STATE.md` (`Hygiene: N flags` / `clean`). Never expand the flag list into STATE — the detail lives in the run output.
+
+### The escalating gate (source-aware)
+
+Whether the audit merely reports or *holds a gate* depends on how ri-state was invoked, carried by an explicit token — never inferred:
+
+- **Report-only** — the invocation carries a `report-only` token (emitted by a skill calling ri-state at chain end, see below). Report the flags and finish; never block. This keeps authorised chains — including an `auto` `ri-execute` run — moving.
+- **Direct / blocking** — no token (a direct operator `/ri-state`, or any unknown source). Report the flags, and if they cross the escalation threshold, hold an **acknowledgement gate**.
+
+**Absence of the token defaults to blocking.** Do not infer the source any other way: an untokened run is treated as direct. This fails safe — a caller that forgets the token causes an over-cautious gate, never a silently-defeated one.
+
+**Escalation threshold (named default, easy to change):** cross when there are **≥5 deterministic flags**, or any single deterministic flag past a hard age — **active work stalled > 5 days** or **open question > 90 days**. Only deterministic signals (the age/staleness flags) count toward this; the advisory already-decided and stale-backlog signals are reported but never contribute, so whether a direct run blocks is reproducible.
+
+**What the acknowledgement gate is:** STATE still regenerates and commits exactly as normal — the snapshot identity and the anti-drift rule are untouched. The gate is *conversational*: the run is **not complete** until the operator either clears the flagged items (resolve stale questions via `ri-file`, move or unblock stalled work) or explicitly acknowledges them for this run. It never refuses to write STATE and never edits OPEN itself.
+
+**Emitting the token (the three callers):** when `ri-compile`, `ri-plan`, or `ri-execute` invoke ri-state at their chain end, they state the invocation is `report-only`. Every such handoff must carry it; a missing token there would (safely) turn an authorised chain into a blocking review, so it is required, not optional.
 
 ## OPEN.md handling
 
@@ -132,7 +147,8 @@ If `OPEN.md` was touched in the same session by another skill, those edits also 
 - Whether to act on the cursor's "Next" suggestion or pick something else
 - Whether any blockers need attention before more work proceeds
 - Whether the open question count warrants a thinking session
+- On a direct run that crosses the hygiene threshold: whether to clear the flagged items now or acknowledge them for this run (the gate waits on this call)
 
 ## What this skill does without re-asking
 
-Lists active, reads done, counts open questions, derives the cursor, writes the file, commits. The operator doesn't approve STATE — it's a derivation, not a decision.
+Lists active, reads done and backlog, counts open questions, derives the cursor, runs the hygiene audit, writes the file, commits. STATE itself is a derivation, not a decision — the operator doesn't approve the cursor. The one exception is the hygiene gate: on a **direct** run whose flags cross the escalation threshold, ri-state does re-ask — it holds the acknowledgement gate until the operator clears or acknowledges the flags. STATE is still written and committed; only the run's completion waits. A **report-only** run (a skill's chain-end handoff) never re-asks.
