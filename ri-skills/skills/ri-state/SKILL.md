@@ -80,7 +80,7 @@ Each appends a single-line entry to `OPEN.md`:
 - <ISO date> <one-line question, with enough context that the operator can answer without re-reading artefacts> [<artefact id this relates to, if any>]
 ```
 
-When the operator resolves an open question, they (or a skill on their behalf) delete the line and file the resolution as an ADR if substantive, or fold it into the relevant artefact.
+When an open question is resolved, `ri-file` drains it (see its "Resolving an open question" flow): on the operator's call it removes the line and either files a durable resolution as an area-tagged decision, hands a becomes-work answer to `ri-compile`, or deletes a trivial one. `ri-file` is the only skill that removes an entry; the acting skills only append; `ri-state` never touches `OPEN.md`.
 
 `ri-state` only reads `OPEN.md` to count entries.
 
@@ -102,7 +102,7 @@ If `OPEN.md` was touched in the same session by another skill, those edits also 
 
 ## Hard rules
 
-- Never edit `OPEN.md` from this skill. Its content is curated by the skills that raise and resolve questions.
+- Never edit `OPEN.md` from this skill. Its content is appended by the acting skills (`ri-compile`/`ri-plan`/`ri-execute`) and removed by `ri-file` on resolution; `ri-state` only reads it.
 - Never invent state that the filesystem doesn't support. The cursor is derived from `/sdlc/work/active/` and `/sdlc/work/done/`, not from session memory.
 - Never let STATE.md exceed 30 lines. If you'd write more, the detail belongs somewhere else.
 - Never put engineering grammar in STATE.md. Operator-grammar only, same altitude as the epic roadmap.

@@ -168,6 +168,22 @@ Doc-only changes to `/docs/` land directly on `main`. Spec divergence updates to
 
 Hand off to `ri-state` at the end. The newly filed artefacts will appear in the next STATE regeneration.
 
+## Resolving an open question
+
+`ri-file` owns resolving an entry in `/sdlc/OPEN.md` and draining it from the queue. Ownership across the skills is unambiguous: the acting skills (`ri-compile`, `ri-plan`, `ri-execute`) only ever **append** questions; `ri-state` **never touches** `OPEN.md`; `ri-file` is the one skill that **removes** an entry, and only as part of resolving it.
+
+Trigger: the operator asks to resolve a question, or another skill hands `ri-file` a resolvable one.
+
+1. **Read** the question and its tags (the work tag and the module-area tag).
+2. **Propose the disposition** — one of: *durable* (a lasting call worth recording), *becomes-work* (the answer is a piece of work to do), or *trivial* (answered, nothing lasting to keep).
+3. **Escalate to the operator.** `ri-file` proposes; the operator decides the disposition. `ri-file` does the bookkeeping, not the judging.
+4. **Drain** in the same step, per the operator's call:
+   - *durable* → generate the ADR via the decision path above (area-tagged, slug id, durability bar), then delete the `OPEN.md` line.
+   - *becomes-work* → hand the question to `ri-compile` as source material so it shapes and routes the backlog-or-active item (that routing is `ri-compile`'s owned logic — do not re-implement it here), then delete the line once the work item exists.
+   - *trivial* → delete the line only.
+
+The line always leaves the queue on resolution, so a resolved question never lingers. Commit the resolution (the decision or work item, plus the `OPEN.md` removal) together.
+
 ## Tier sensitivity
 
 **Tier 1:** Filing is usually skipped. Quick scripts don't produce ADR-worthy work. If the operator explicitly asks to file something from tier-1 work, do it, but default to "nothing to file."
