@@ -83,6 +83,8 @@ not be re-litigated per story.
   - t2 — raise questions with a module tag and rewrite the queue's convention from append-only to live-only
   - t3 — retrofit existing queue entries with module tags
 - s04 — add a hygiene audit at state refresh that flags neglect and escalates to a required review at thresholds
+  - t1 — add the hygiene audit that flags stale/decided/stalled items, staleness judged by commit history
+  - t2 — make the audit escalate and source-aware: block only on a direct refresh, report-only at chain end
 - s05 — surface relevant open questions and decisions automatically when work starts on the code module they touch
 
 ## Status
