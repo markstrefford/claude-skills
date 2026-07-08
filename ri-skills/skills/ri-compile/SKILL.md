@@ -75,6 +75,8 @@ The operator approves both the epic and the story sequence. If the story breakdo
 
 Stories under a proposed epic don't get separate artefact files at compile time. They exist as one-liner entries in the epic's roadmap until each one is compiled individually (or until the operator asks to break them out as separate story artefacts now).
 
+**Number the epic and its children.** A new epic gets a sequential two-digit number with a readable name: `e<N>-<name>` (e.g. `e01-governor-foresight`), assigned at compile time as the next unused epic number in the repo. Stories and tasks under it drop the long epic-name prefix for the compact number — story `e<N>-s<M>-<slug>`, task `e<N>-s<M>-t<K>-<slug>` (`s<M>` two digits, `t<K>` one). The number keeps two concurrent epics from colliding on `s01/s02` and makes parentage and ordering visible at a glance. Number new epics going forward; pre-existing name-based epics (`epic-<name>` with `<name>-s<N>` children) are **not** renumbered until they are done — the scheme is deliberately mixed in the interim.
+
 ### 3. Generate the artefact, thin
 
 Once the operator approves the shape, generate the artefact. The rules:

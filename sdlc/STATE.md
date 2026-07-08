@@ -27,8 +27,6 @@ operator's call. Parent epic `e02-sdlc-lifecycle-hygiene` and `e01` remain activ
   decisions record) — unblocked.
 - Before **e02 s03** and **s04** plan, resolve their two OPEN.md questions (who
   owns OPEN resolution; how the hygiene gate behaves at skill-invoked chain end).
-- Reconcile the install/source drift (merge `feature/ri-compile-epic-numbering`)
-  so the ri-compile numbering paragraph lands in the repo.
 
 ## Blockers
 
@@ -37,7 +35,7 @@ operator's call. Parent epic `e02-sdlc-lifecycle-hygiene` and `e01` remain activ
 
 ## Open
 
-- 6 items in OPEN.md.
+- 5 items in OPEN.md.
 
 ## Notes
 
