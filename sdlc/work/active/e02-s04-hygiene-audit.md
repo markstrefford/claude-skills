@@ -73,4 +73,12 @@ is load-bearing and must be exact.
 
 ## Status
 
-Planned into tasks. Awaiting operator checkpoint before execute.
+Both tasks done (t1–t2 in `/work/done/`). Operator checkpoint cleared: thresholds
+agreed (active stalled flag > 2d / block > 5d; open question 30d/90d; backlog 60d
+advisory), git-staleness branch-relative limitation accepted, acknowledgement-gate
+semantics confirmed. Acceptance verified: the audit flags stale/already-decided/
+stalled/stale-backlog from the filesystem and git; a direct `/ri-state` reports and
+holds an acknowledgement gate once deterministic flags cross the threshold; a
+report-only chain-end run never blocks; ri-state's identity sections reconciled; all
+edited skill copies in parity. Merge-ready — story-close and merge are the
+operator's call.
