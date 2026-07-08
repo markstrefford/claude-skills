@@ -2,7 +2,7 @@
 id: e02-s04-t1-hygiene-audit
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-s04-hygiene-audit
 created: 2026-07-08
@@ -37,9 +37,9 @@ work has happened, so commit recency is the honest signal.
     ri-state cannot see commits on branches it isn't on, and this limitation is
     stated plainly rather than papered over;
   - backlog items older than the backlog-stale threshold.
-- Thresholds are stated as named defaults in the skill (proposed: open question
-  stale > 30 days, active stalled > 14 days, backlog stale > 60 days) and are
-  documented as easy to change.
+- Thresholds are stated as named defaults in the skill (operator-agreed: active
+  work stalled > 2 days, open question stale > 30 days, backlog stale > 60 days)
+  and are documented as easy to change.
 - The audit produces a short hygiene list reported to the operator; STATE itself
   gains at most a one-line hygiene pointer (count), staying within its length rule.
 - The audit reads git history for staleness — a capability ri-state does not have

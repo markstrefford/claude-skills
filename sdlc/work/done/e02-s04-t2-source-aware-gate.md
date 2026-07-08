@@ -2,7 +2,7 @@
 id: e02-s04-t2-source-aware-gate
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-s04-hygiene-audit
 created: 2026-07-08
@@ -43,9 +43,10 @@ Implements `docs/decisions/hygiene-gate-escalation.md` — block on a direct
   the calling chain (including an `auto` ri-execute run) always proceeds.
 - The three skills that call ri-state at chain end (ri-compile, ri-plan,
   ri-execute) emit the report-only token; a check confirms each handoff carries it.
-- The escalation threshold is a named default (proposed: block on a direct run when
-  ≥5 deterministic flags, or any single deterministic flag past a hard age — open
-  question > 90 days or active work stalled > 30 days), documented as changeable.
+- The escalation threshold is a named default (operator-agreed: block on a direct
+  run when ≥5 deterministic flags, or any single deterministic flag past a hard age
+  — active work stalled > 5 days or open question > 90 days), documented as
+  changeable.
 - ri-state's "derivation, not a decision" / "does without re-asking" / Hard-rules
   sections are rewritten to admit the direct-run acknowledgement gate, so the skill
   does not self-contradict.
