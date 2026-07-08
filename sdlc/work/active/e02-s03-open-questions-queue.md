@@ -70,4 +70,9 @@ for decisions, so the queue and the decisions record line up by module.
 
 ## Status
 
-Planned into tasks. Ready for execute.
+All three tasks done (t1–t3 in `/work/done/`). Acceptance verified: ri-file has a
+resolution path that escalates the disposition and drains the entry; all four
+skills that document the OPEN format carry the two-tag shape (work + module);
+OPEN.md is now live-questions-only with ri-file named as remover; existing entries
+retrofitted with module tags. All edited skill copies in parity. Merge-ready —
+story-close and merge are the operator's call.

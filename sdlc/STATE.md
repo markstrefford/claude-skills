@@ -7,31 +7,29 @@ updated: 2026-07-08
 
 ## Active focus
 
-`e02-sdlc-lifecycle-hygiene` — s01 (backlog stage) and s02 (decisions record
-tightening) both **complete and merge-ready**. s02 added the `area` tag defined as
-a stack-relative code-module reference (operator's call: module granularity, not
-epic-id, not concept slug), settled decision ids as descriptive slugs, and folded
-the durability bar into ri-file. All s01/s02 tasks in `/work/done/`; skill copies
-in parity. s03–s05 remain. `e01` also active.
+`e02-sdlc-lifecycle-hygiene` — s01 (backlog stage), s02 (decisions record), and
+s03 (open-questions queue lifecycle) all **complete and merge-ready**. s03 gave
+ri-file a resolution path (escalate disposition, drain the entry), added the
+module tag to the OPEN format across all four skills that document it, rewrote the
+queue from append-only to live-only, and retrofitted existing entries. All s01–s03
+tasks in `/work/done/`; skill copies in parity. s04–s05 remain. `e01` also active.
 
-- **e02** epic is `active`. s01 (backlog stage) and s02 (decisions record) done
-  and merge-ready; s03–s05 remain (s03 OPEN questions-only, module-area-tagged +
-  drain on resolution, s04 hygiene audit with escalating gate, s05 contextual
-  surfacing by code module). Both s03/s04 design questions now resolved (operator
-  decided) — four decisions in `docs/decisions/`: `sdlc-store-lifecycle`,
-  `plan-mode-as-pipeline-frontend`, `open-question-resolution` (ri-file owns the
-  drain, escalates disposition to operator), `hygiene-gate-escalation` (gate blocks
-  only on direct `/ri-state`).
+- **e02** epic is `active`. s01 (backlog stage), s02 (decisions record), s03
+  (open-questions queue) done and merge-ready; s04–s05 remain (s04 hygiene audit
+  with escalating gate, s05 contextual surfacing by code module). s04 is grounded
+  by the `hygiene-gate-escalation` decision; s05 needs s03's module tags (now in
+  place). Four decisions in `docs/decisions/`.
 - **e01** epic is `active` with a four-story roadmap (s01 gate, s02 auto-progress,
   s03 tier-3 hygiene, s04 publication/README). No story planned yet.
 
 ## Immediate next
 
-- Plan **e02 s03** (OPEN questions-only, module-area-tagged, drained on
-  resolution) — now unblocked; grounded by the `open-question-resolution` decision.
-- **s04** (hygiene gate) also unblocked, grounded by `hygiene-gate-escalation`.
-  **s05** (surface by module) needs s03's area tags first.
-- Merge **e02 s01 + s02** whenever ready (operator's call).
+- Plan **e02 s04** (hygiene audit with escalating gate) — the meatiest story:
+  turns ri-state into a source-aware gate (blocks on direct `/ri-state`, reports
+  when auto-invoked) and adds git-log-based staleness detection. Worth an operator
+  checkpoint before building.
+- **s05** (surface questions/decisions by module) is unblocked once s04 lands.
+- Merge **e02 s01 + s02 + s03** whenever ready (operator's call).
 
 ## Blockers
 
