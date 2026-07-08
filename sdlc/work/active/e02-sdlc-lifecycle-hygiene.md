@@ -71,6 +71,10 @@ not be re-litigated per story.
 ## Roadmap
 
 - s01 — add a backlog stage for shaped-but-unstarted work, and make compile always drain the capture zone
+  - t1 — establish the backlog store alongside active and done
+  - t2 — teach compile to route shaped-but-unstarted work to the backlog and always empty the capture zone
+  - t3 — teach the cursor to see the backlog and offer it as what to pick up next
+  - t4 — give the backlog a defined exit: starting a backlog item promotes it to active
 - s02 — tighten the existing decisions record so it holds only durable calls, area-tagged and dated
 - s03 — make the open-questions queue hold only live questions: tagged to their work, dated, and removed on resolution
 - s04 — add a hygiene audit at state refresh that flags neglect and escalates to a required review at thresholds

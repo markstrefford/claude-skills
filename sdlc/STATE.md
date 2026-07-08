@@ -7,10 +7,12 @@ updated: 2026-07-08
 
 ## Active focus
 
-`e02-sdlc-lifecycle-hygiene` — giving every SDLC store a defined exit plus a
-hygiene audit at state-refresh (escalating at thresholds), so the stores stay
-legible without periodic archaeology. Just compiled and senior-staff reviewed
-(READY WITH NOTES); not yet planned. Runs alongside `e01`, which remains active.
+`e02-s01-backlog-stage` — the foundation story of the lifecycle-hygiene epic:
+add a backlog work-stage and make compile drain shaped items from the capture
+zone. Planned into four tasks (t1–t4), senior-staff reviewed (NEEDS WORK →
+load-bearing findings applied: backlog exit added as t4, sync landmine defused).
+Ready for execute. Parent epic `e02-sdlc-lifecycle-hygiene` and `e01` remain
+active.
 
 ## In flight
 
@@ -24,8 +26,8 @@ legible without periodic archaeology. Just compiled and senior-staff reviewed
 
 ## Immediate next
 
-- Plan **e02 s01** (backlog stage + drain raw) — it's the foundation the other
-  stories build on and has no gating OPEN question.
+- Execute **e02 s01** tasks t1→t4 in sequence (store → compile routes in → cursor
+  reads → promotion exit).
 - Before **e02 s03** and **s04** plan, resolve their two OPEN.md questions (who
   owns OPEN resolution; how the hygiene gate behaves at skill-invoked chain end).
 
@@ -36,7 +38,7 @@ legible without periodic archaeology. Just compiled and senior-staff reviewed
 
 ## Open
 
-- 5 items in OPEN.md.
+- 6 items in OPEN.md.
 
 ## Notes
 
