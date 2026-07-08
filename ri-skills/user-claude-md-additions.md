@@ -30,7 +30,9 @@ Default to this level. If I want more detail I'll say "show me the detail." If y
 
 ## Navigation
 
-Don't ask permission to cd back to repo root from a subdirectory. Just cd and run.
+The working directory persists across Bash calls, and you're at the repo root almost always — so you don't need to `cd` for in-repo work. Never prepend `cd <repo-root> && …` to a command; run it directly. To act in a subdirectory, prefer an absolute path over a `cd`. Only `cd` outside the current repo when a task genuinely needs it (e.g. searching another checkout) — that prompts for permission on purpose: I want to know when you leave the repo.
+
+This is enforced by the `cd-repo-guard.sh` PreToolUse hook (see `ri-skills/hooks/`): `cd` anywhere inside the current repo runs without a prompt; `cd` outside it asks. The hook discovers the repo root at runtime from git, so it works in every repo with no per-repo configuration.
 
 ## Session hygiene
 

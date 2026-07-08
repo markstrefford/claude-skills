@@ -102,7 +102,17 @@ cat ri-skills/user-claude-md-additions.md >> ~/.claude/CLAUDE.md
 
 This is the always-on layer. Edit it to match how you actually want to be talked to. The defaults are operator-style (consequences over implementation detail) and assume you don't review code line by line.
 
-### 4. (Optional) Adjust the model pins
+### 4. Install the `cd` guard hook
+
+```bash
+mkdir -p ~/.claude/hooks
+cp ri-skills/hooks/cd-repo-guard.sh ~/.claude/hooks/
+chmod +x ~/.claude/hooks/cd-repo-guard.sh
+```
+
+Then register it in `~/.claude/settings.json` and reload — full merge command and verification in [`ri-skills/hooks/README.md`](ri-skills/hooks/README.md). The hook makes `cd` inside the current repo silent while `cd` outside it still asks, so you're told when Claude leaves the repo. It pairs with the Navigation guidance from step 3.
+
+### 5. (Optional) Adjust the model pins
 
 Every skill and sub-agent ships with a `model:` pin in its frontmatter, chosen to match the work: cheap models for mechanical verbs (`ri-capture` on haiku), the strongest for judgement-heavy ones (`ri-compile`, `ri-plan` on opus), mid-tier for review (`verifier` on sonnet). This is the main lever on token spend — routing reviews and mechanical work off the top model cuts cost by roughly 5x with no real quality loss.
 
