@@ -200,6 +200,20 @@ Drop the `security-gate` line from a repo's config to disable it.
 
 The default for an unconfigured repo is tier-3 (full rigor). Most repos genuinely sit at tier-2. A few content/glue repos sit at tier-1. Declare honestly. Over-engineering tier-1 work wastes tokens; under-engineering tier-3 work bites you in production.
 
+### Landing work — merge vs PR by tier
+
+Review already happens in-session: senior-staff at plan, the verifier at execute, the governance gate at story close. So a GitHub **PR isn't a second review** — it's a durable record and a place for CI to run. There are two landing modes; a repo picks one.
+
+**Default (PR-based) mode.** Open a PR when a senior-staff review ran on the story — the trigger reuses a call you already make, rather than a fuzzy "is this significant":
+
+- **tier 1** — no staff review → **local merge**. No ceremony.
+- **tier 2** — **PR when you invoked the staff review** at plan on this story's task sequence; local merge otherwise.
+- **tier 3** — staff review always runs → **always PR**. The PR is where the per-story governance-gate evidence (`/security-review` + `/code-review`) lives.
+
+The decision is made once, at plan time (did staff review run on *this* story?), and consumed at merge time.
+
+**Release-based mode.** A repo that ships via semver releases lands via **merge + tag** instead of a PR per story. It keeps full tier-3 *review* rigour (senior-staff every story, the gate at every story close) — and it must not lose the *audit trail* the PR was carrying: in this mode the **per-story governance-gate verdict is recorded in the story's close/merge commit** (a trailer or line: gate clean, or the findings), and the **release notes summarise it per story at the tag**. That keeps the evidence durable in git history without a PR. Reach for a PR only when a specific change is unusually risky. This repo works this way — `v2.x` tags plus their notes are the record; stories merge to `main` carrying their gate verdict and roll into the next tag.
+
 ## Configure
 
 ### Per-repo `.ri/config.md`

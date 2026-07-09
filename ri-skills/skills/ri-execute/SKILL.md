@@ -165,6 +165,8 @@ Add dependency and secret scanners here too if the repo declares them (e.g. `npm
 
 The gate never merges and never marks the story `done` on its own — story-level state and the merge are the operator's call. Its job is to produce a verdict, block when the verdict is load-bearing, and route everything else to the right queue.
 
+When a story is merge-ready, say how it should land, by tier (see the README's "Landing work — merge vs PR by tier"): tier-1 → local merge; tier-2 → PR if a senior-staff review ran at plan, else merge; tier-3 → PR (the PR carries the governance-gate evidence), unless the repo is release-based, in which case it merges and rolls into the next semver release. In release-based mode the PR is gone, so record the governance-gate verdict (clean, or the findings) in the story's close/merge commit — that keeps the evidence durable in git history. Name the expected landing path in the summary; the operator still makes the call.
+
 ## Hard rules
 
 - Never merge or declare a story merge-ready on a `security-gate: required` repo without running the governance gate at story close
