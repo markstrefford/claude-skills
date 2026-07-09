@@ -2,7 +2,7 @@
 id: e02-s03-open-questions-queue
 kind: story
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-sdlc-lifecycle-hygiene
 sources: [work/active/e02-sdlc-lifecycle-hygiene.md, docs/decisions/open-question-resolution.md]

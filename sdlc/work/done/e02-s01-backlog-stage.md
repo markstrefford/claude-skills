@@ -2,7 +2,7 @@
 id: e02-s01-backlog-stage
 kind: story
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-sdlc-lifecycle-hygiene
 sources: [work/active/e02-sdlc-lifecycle-hygiene.md, docs/decisions/sdlc-store-lifecycle.md]

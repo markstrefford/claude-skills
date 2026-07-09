@@ -2,7 +2,7 @@
 id: e02-sdlc-lifecycle-hygiene
 kind: epic
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 sources: [raw/sdlc-lifecycle-hygiene.md]
 created: 2026-07-08

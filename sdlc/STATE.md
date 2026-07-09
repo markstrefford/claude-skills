@@ -1,50 +1,45 @@
 ---
 project: claude-skills
-updated: 2026-07-08
+updated: 2026-07-09
 ---
 
 # STATE — claude-skills
 
 ## Active focus
 
-`e02-sdlc-lifecycle-hygiene` — **complete. All five stories done and merge-ready.**
-The SDLC now has a full store lifecycle: backlog stage (s01), module-tagged
-decisions record (s02), live-only drained open-questions queue (s03), ri-state
-hygiene audit + source-aware escalating gate (s04), and module-based surfacing of
-questions/decisions when work starts (s05). Every task in `/work/done/`; all skill
-copies in parity; four decisions filed. Ships as one release on
-`feature/sdlc-lifecycle-hygiene` — merge is the operator's call. `e01` still active.
+`e01-sdlc-autonomy-additions` — absorbing Jiri's PR #1 ideas (autonomy gate,
+auto-progress loop, tiered hygiene, publication handling). Compiled and reviewed;
+not yet planned. This is the only active epic — `e02` shipped in **v2.1.0**.
 
-- **e02** epic is `active` and **complete** — all five stories done and
-  merge-ready, awaiting merge as one ri-skills release. Four decisions in
-  `docs/decisions/`. On merge, the epic and its stories move to `/work/done/`.
+## In flight
+
 - **e01** epic is `active` with a four-story roadmap (s01 gate, s02 auto-progress,
   s03 tier-3 hygiene, s04 publication/README). No story planned yet.
+- **e02-sdlc-lifecycle-hygiene** is **done** — released as v2.1.0 and moved to
+  `/work/done/` with all its stories. It gave the SDLC a full store lifecycle:
+  backlog stage, module-tagged decisions record, live-only drained open-questions
+  queue, ri-state hygiene audit + source-aware escalating gate, and module-based
+  surfacing. Four decisions in `docs/decisions/`.
 
 ## Immediate next
 
-- Cut the ri-skills release: merge `feature/sdlc-lifecycle-hygiene` (and
-  `feature/cd-repo-guard-hook`) into `main` — operator's call. On merge, move the
-  e02 epic + stories to `/work/done/`.
-- Revisit the two behavioural `raw/` notes (`comments-changes`, `reduce_verbosity`)
-  → global CLAUDE.md, when you're ready.
+- Plan **e01 s01** (the autonomy gate) — but resolve the three OPEN.md questions
+  first, especially where shared gate behaviour lives.
 
 ## Blockers
 
-- None hard. Deferred calls in OPEN.md gate clean planning of e01 s01/s03/s04 and
-  e02 s03/s04.
+- None hard. Three deferred calls in OPEN.md gate clean planning of e01 s01/s03/s04.
 
 ## Open
 
-- 3 items in OPEN.md.
+- 3 items in OPEN.md (all e01, now module-area tagged).
 
 ## Notes
 
 - This repo dogfoods its own SDLC: tier-3 config at `.ri/config.md`,
   `/sdlc/work/` and `/sdlc/docs/` live.
-- `raw/` still holds three behavioural notes (`cd-ask-not-needed` — resolved by
-  the cd-guard hook and dischargeable; `comments-changes`, `reduce_verbosity` —
-  pending a fold into the global CLAUDE.md, not skills work).
-- The cd-guard hook and its docs sit on branch `feature/cd-repo-guard-hook`.
-- The e02 compile artefacts are uncommitted, pending a dedicated branch.
+- `raw/` is empty — the two behavioural notes were folded into the global
+  `~/.claude/CLAUDE.md` (Keep responses tight; Code comments); `cd-ask-not-needed`
+  was resolved by the cd-guard hook and discarded.
+- v2.1.0 shipped: e02 lifecycle hygiene + the cd-guard hook, merged to `main`.
 - PR #1 (jiludvik2) stays open until e01's stories land, then gets credit + close.

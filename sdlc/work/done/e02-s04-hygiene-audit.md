@@ -2,7 +2,7 @@
 id: e02-s04-hygiene-audit
 kind: story
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e02-sdlc-lifecycle-hygiene
 sources: [work/active/e02-sdlc-lifecycle-hygiene.md, docs/decisions/hygiene-gate-escalation.md, docs/decisions/sdlc-store-lifecycle.md]
