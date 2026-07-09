@@ -7,28 +7,25 @@ updated: 2026-07-09
 
 ## Active focus
 
-`e03-governance-granularity` — s01 (footprint-scoped security review) **done and
-merge-ready**: the gate now runs `/security-review` only when a story touches
-externally-deployed code, per an optional per-repo footprint map, with conservative
-fail-safe defaults. s02 (per-repo scanners) and s03 (invariant enforcement) remain.
-On `feature/e03-governance-granularity`, headed for v2.2.0. `e01` also active;
-`e02` shipped v2.1.0.
+`e01-sdlc-autonomy-additions` — absorbing Jiri's PR #1 ideas (autonomy gate,
+auto-progress loop, tiered hygiene, publication handling). Compiled and reviewed;
+not yet planned. The only active epic — `e03` shipped in **v2.2.0**.
 
 ## In flight
 
 - **e01** epic is `active` with a four-story roadmap (s01 gate, s02 auto-progress,
   s03 tier-3 hygiene, s04 publication/README). No story planned yet.
-- **e02-sdlc-lifecycle-hygiene** is **done** — released as v2.1.0 and moved to
-  `/work/done/` with all its stories. It gave the SDLC a full store lifecycle:
-  backlog stage, module-tagged decisions record, live-only drained open-questions
-  queue, ri-state hygiene audit + source-aware escalating gate, and module-based
-  surfacing. Four decisions in `docs/decisions/`.
+- **e03-governance-granularity** is **done** — shipped v2.2.0 and moved to
+  `/work/done/`. Made the story-close gate granular: `/security-review` runs only
+  on stories touching externally-deployed code (per-repo footprint map), and a
+  repo's declared scanners run under the same scoping (secret always;
+  dependency/code footprint-scoped). s03 (invariant enforcement) was descoped —
+  `public-deploy` is subsumed by the footprint map; `version-pairing` stays parked.
 
 ## Immediate next
 
-- Decide v2.2.0 shape: ship s01 alone (a complete feature) or continue e03 s02
-  (scanners) + s03 (invariants) for a fuller release. Operator's call.
-- `e01 s01` (autonomy gate) still waits on its three OPEN.md questions.
+- Plan **e01 s01** (the autonomy gate) — but resolve the three OPEN.md questions
+  first, especially where shared gate behaviour lives.
 
 ## Blockers
 
@@ -36,14 +33,16 @@ On `feature/e03-governance-granularity`, headed for v2.2.0. `e01` also active;
 
 ## Open
 
-- 3 items in OPEN.md (all e01, now module-area tagged).
+- 3 items in OPEN.md (all e01, module-area tagged).
 
 ## Notes
 
 - This repo dogfoods its own SDLC: tier-3 config at `.ri/config.md`,
-  `/sdlc/work/` and `/sdlc/docs/` live.
-- `raw/` is empty — the two behavioural notes were folded into the global
-  `~/.claude/CLAUDE.md` (Keep responses tight; Code comments); `cd-ask-not-needed`
-  was resolved by the cd-guard hook and discarded.
-- v2.1.0 shipped: e02 lifecycle hygiene + the cd-guard hook, merged to `main`.
+  `/sdlc/work/` and `/sdlc/docs/` live. `raw/` is empty.
+- Releases: v2.0.0 (SDLC v2), v2.1.0 (lifecycle hygiene + cd-guard hook),
+  v2.2.0 (governance-gate granularity: footprint-scoped security + scanners,
+  plus the merge-vs-PR landing convention). ri-skills lands release-based:
+  tier-3 review rigour, merge + tag rather than per-story PRs.
+- `version-pairing` / `public-deploy` enforcement is parked (public-deploy is the
+  coarse form of footprint; a repo with a footprint map doesn't need it).
 - PR #1 (jiludvik2) stays open until e01's stories land, then gets credit + close.

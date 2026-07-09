@@ -2,7 +2,7 @@
 id: e03-governance-granularity
 kind: epic
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 sources: [raw/footprint-scoped-security-gate.md]
 created: 2026-07-09
