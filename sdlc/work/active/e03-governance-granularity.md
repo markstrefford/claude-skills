@@ -31,9 +31,8 @@ what to run; it changes nothing a product does.
 - Each repo declares its own footprint (which code is externally reachable versus
   internal-only); the gate reads it to decide, per story, whether the security
   review is needed.
-- The same gate becomes the home for the currently-parked granularity work:
-  per-repo dependency and secret scanners, and enforcement of the version-pairing
-  and public-deploy invariants.
+- The same gate runs a repo's declared dependency and secret scanners, scoped the
+  same way (secret always; dependency/code footprint-scoped).
 
 ## Out of scope / carry-forward
 
@@ -41,6 +40,10 @@ what to run; it changes nothing a product does.
   builds the mechanism that reads them, not any one map.
 - Changing what the security or code reviews actually check. This epic changes
   *when* they run and *what else* the gate orchestrates, not the reviews' content.
+- Enforcing the `version-pairing` / `public-deploy` invariants (originally sketched
+  as s03) — descoped. `public-deploy` turned out to be the coarse form of the
+  footprint map (which supersedes it), so there was nothing separate to enforce;
+  `version-pairing` is an unrelated concern left parked.
 
 ## Standing gate
 
@@ -71,8 +74,11 @@ toward running the security review, never toward skipping it.
 - s02 — wire a repo's declared dependency and secret scanners into the same gate
   - t1 — the gate runs declared scanners (secret always, dependency/code footprint-scoped), findings through the existing verdict
   - t2 — document declaring scanners and show it in the tier-3 example
-- s03 — enforce the version-pairing and public-deploy invariants at the gate rather than only reading them
 
 ## Status
 
-Compile done. Plan reads the code before writing tasks.
+**Complete** (s01 + s02 done and merge-ready). The gate now runs `/security-review`
+only on stories touching externally-deployed code (footprint-scoped), and runs a
+repo's declared scanners under the same scoping. s03 (invariant enforcement) was
+descoped — `public-deploy` is subsumed by the footprint map, `version-pairing`
+parked. Ships as v2.2.0. Epic and stories move to `/work/done/` at merge.
