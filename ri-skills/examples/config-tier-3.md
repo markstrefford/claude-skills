@@ -13,7 +13,31 @@ stacks:
 # Tier-3 invariants
 version-pairing: backend/pyproject.toml and backend/version.json carry the same semver; bump together, never let them drift
 public-deploy: true
-security-gate: required
+security-gate: required   # scoped by the footprint map below
+
+# Footprint map (optional) — which code is externally reachable vs internal-only.
+# At story close /code-review always runs; /security-review runs only when the
+# story's changed files touch a `deployed` path. Most-specific rule wins (by path
+# depth); an unmatched path defaults to deployed; omitting the whole block runs the
+# security review on everything, exactly as before.
+footprint:
+  internal:            # only ever run on our machines; no external surface
+    - backend/analysis/**
+    - tests/**
+  deployed:            # externally reachable; /security-review required
+    - backend/**
+    - web/**
+
+# Scanners (optional) — the gate runs these at story close. secret always;
+# dependency/code footprint-scoped. A match/high finding blocks; a scanner that
+# can't run blocks (never green). Omit the block to run none.
+scanners:
+  - command: gitleaks detect --no-banner
+    class: secret
+  - command: pip-audit
+    class: dependency
+  - command: bandit -r backend
+    class: code
 
 # Tier-3 behaviour
 
@@ -35,9 +59,11 @@ How the skills behave at tier-3:
   per-task if they want the lite path
 
 `security-gate: required` is live: at story close `ri-execute` runs the
-governance gate (`/security-review` and `/code-review`) over the story
-branch before the story is merge-ready. Drop the line to disable the gate
-for a repo.
+governance gate over the story branch before the story is merge-ready.
+`/code-review` always runs; `/security-review` runs only when the story's
+changed files touch a `deployed` path in the optional `footprint:` map above
+(omit the map to run it on everything). Drop the `security-gate` line to
+disable the gate entirely for a repo.
 
 `version-pairing` and `public-deploy` are still advisory — repo facts the
 skills read but don't yet enforce. Keep them documented and ready to wire

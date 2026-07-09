@@ -189,7 +189,8 @@ Slash commands work too if you prefer explicit: `/ri-compile`, `/ri-execute`, et
 
 On a repo whose `.ri/config.md` carries `security-gate: required` (tier-3 by default), `ri-execute` runs a gate the moment a story's last task lands — before the branch goes near `main`. It reviews the whole story as one change, not task by task:
 
-- `/security-review` and `/code-review` run over the story branch's full diff against `main`.
+- `/code-review` runs over the story branch's full diff against `main`, always. `/security-review` runs too — but if the repo declares a `footprint:` map (see below), only when the story's changed files touch externally-deployed code. No map → it runs on everything, as before.
+- Any scanners the repo declares run here too: `secret` scanners always (within a firing gate, regardless of footprint), `dependency`/`code` scanners footprint-scoped like the security review. A secret match blocks; a dependency/code finding blocks at high/critical and is advisory below; a scanner that can't run blocks rather than passing green.
 - A security finding or a high-severity correctness bug **blocks**: the story isn't merge-ready, you're told now, and the fix becomes new task work (back through `ri-plan`).
 - Cleanups and low-severity findings are **advisory**: logged to `OPEN.md`, tagged with the story id, and the chain continues.
 - A clean run means merge-ready. The gate never merges and never marks the story done — that stays your call.
@@ -244,6 +245,37 @@ default-rigor: tier-1
 branch-default: main
 test-command: pytest
 ```
+
+On a `security-gate: required` repo you can optionally scope the security review by **footprint** — which code is externally reachable versus internal-only:
+
+```
+security-gate: required
+
+footprint:
+  internal:            # never externally reachable
+    - tests/**
+    - analysis/**
+  deployed:            # externally reachable; /security-review required
+    - api/**
+    - web/**
+```
+
+At story close `/code-review` always runs; `/security-review` runs only when the story's changed files touch a `deployed` path. Most-specific rule wins (by path depth), an unmatched path counts as deployed, and **omitting the block runs the security review on everything, exactly as before** — it's optional and additive.
+
+You can also declare **scanners** the gate runs at story close — each with a `command` and a `class`:
+
+```
+security-gate: required
+
+scanners:
+  - command: gitleaks detect --no-banner
+    class: secret        # always runs; a match blocks
+  - command: pip-audit
+    class: dependency     # footprint-scoped; high/critical blocks, else advisory
+    block-threshold: high # optional; default high
+```
+
+`secret` scanners always run within a firing gate; `dependency` and `code` scanners are footprint-scoped like the security review. A scanner that can't run blocks rather than passing green. The block is optional and additive — declare none and the gate behaves exactly as without it.
 
 ### User-level `~/.claude/CLAUDE.md`
 

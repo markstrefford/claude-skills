@@ -7,9 +7,12 @@ updated: 2026-07-09
 
 ## Active focus
 
-`e01-sdlc-autonomy-additions` — absorbing Jiri's PR #1 ideas (autonomy gate,
-auto-progress loop, tiered hygiene, publication handling). Compiled and reviewed;
-not yet planned. This is the only active epic — `e02` shipped in **v2.1.0**.
+`e03-governance-granularity` — s01 (footprint-scoped security review) **done and
+merge-ready**: the gate now runs `/security-review` only when a story touches
+externally-deployed code, per an optional per-repo footprint map, with conservative
+fail-safe defaults. s02 (per-repo scanners) and s03 (invariant enforcement) remain.
+On `feature/e03-governance-granularity`, headed for v2.2.0. `e01` also active;
+`e02` shipped v2.1.0.
 
 ## In flight
 
@@ -23,8 +26,9 @@ not yet planned. This is the only active epic — `e02` shipped in **v2.1.0**.
 
 ## Immediate next
 
-- Plan **e01 s01** (the autonomy gate) — but resolve the three OPEN.md questions
-  first, especially where shared gate behaviour lives.
+- Decide v2.2.0 shape: ship s01 alone (a complete feature) or continue e03 s02
+  (scanners) + s03 (invariants) for a fuller release. Operator's call.
+- `e01 s01` (autonomy gate) still waits on its three OPEN.md questions.
 
 ## Blockers
 
