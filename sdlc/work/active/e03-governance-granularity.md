@@ -66,6 +66,8 @@ toward running the security review, never toward skipping it.
 ## Roadmap
 
 - s01 — scope the security review by footprint: always code-review, security-review only when a story touches externally-deployed code
+  - t1 — the gate reads a repo's footprint map and runs security-review only on deployed changes
+  - t2 — document the optional footprint block and show it in the tier-3 config example
 - s02 — wire a repo's declared dependency and secret scanners into the same gate
 - s03 — enforce the version-pairing and public-deploy invariants at the gate rather than only reading them
 
