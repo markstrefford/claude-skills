@@ -2,12 +2,22 @@
 id: e01-sdlc-autonomy-additions
 kind: epic
 project: claude-skills
-status: active
+status: done
+resolution: parked-as-done — based on SDLC v1 (retired at v2.0.0); never built as its own epic; superseded
 autonomy: attended
 sources: [raw/pr1-jiri-autonomy-additions.md]
 created: 2026-06-06
-updated: 2026-06-06
+updated: 2026-07-09
 ---
+
+> **Parked as done — not built.** This epic came from Jiri's PR #1 against the
+> *version-1* single-file SDLC, which was retired at v2.0.0. It was kept around as a
+> reference while the v2.x work happened, but it was never planned or built and won't
+> be. Several of its ideas already exist in ri-skills v2.x by other routes —
+> execution already chains through a story's tasks without re-asking, autonomy levels
+> (attended/review/auto) exist, and the story-close governance gate provides tiered
+> rigour. Recorded here for provenance, not as delivered work. PR #1 can be closed
+> with thanks.
 
 # Absorb the autonomy and hygiene additions into ri-skills
 
@@ -69,10 +79,9 @@ models that can disagree. s01 plans and reviews first, ahead of the rest.
 
 ## Status
 
-**Parked in backlog (2026-07-09).** Shaped and reviewed but never planned; set
-aside as unrelated to the governance/lifecycle line of work. Promote back to
-`/work/active/` (via ri-plan) if picked up. PR #1 stays open until then. The three
-OPEN.md questions tagged `e01` remain its gating items.
+**Parked as done — not built (2026-07-09).** Superseded: v1-based, and the useful
+ideas already exist in ri-skills v2.x by other routes (see the note at the top). The
+three OPEN.md questions that gated it are obsolete and were dropped.
 
 Compiled 2026-06-06 from PR #1. Tier-3 repo — senior-staff-engineer reviewed at
 compile; load-bearing findings applied (gate has no shared home, gate points at
