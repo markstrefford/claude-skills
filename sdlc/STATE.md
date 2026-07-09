@@ -7,12 +7,12 @@ updated: 2026-07-09
 
 ## Active focus
 
-`e03-governance-granularity` — making the story-close governance gate granular:
-security review scoped by a per-repo footprint map (always code-review, security-
-review only when a story touches externally-deployed code), then per-repo scanners
-and invariant enforcement. Just compiled and senior-staff reviewed (READY WITH
-NOTES — four grounding items carried into the s01 plan). On `feature/e03-
-governance-granularity`, headed for v2.2.0. `e01` also active; `e02` shipped v2.1.0.
+`e03-governance-granularity` — s01 (footprint-scoped security review) **done and
+merge-ready**: the gate now runs `/security-review` only when a story touches
+externally-deployed code, per an optional per-repo footprint map, with conservative
+fail-safe defaults. s02 (per-repo scanners) and s03 (invariant enforcement) remain.
+On `feature/e03-governance-granularity`, headed for v2.2.0. `e01` also active;
+`e02` shipped v2.1.0.
 
 ## In flight
 
@@ -26,9 +26,8 @@ governance-granularity`, headed for v2.2.0. `e01` also active; `e02` shipped v2.
 
 ## Immediate next
 
-- Plan **e03 s01** (footprint-scoped security review), carrying the four review
-  grounding items into acceptance: absent map = today's behaviour; define
-  "ambiguous"; unattended chains default-yes never stall; rename/delete semantics.
+- Decide v2.2.0 shape: ship s01 alone (a complete feature) or continue e03 s02
+  (scanners) + s03 (invariants) for a fuller release. Operator's call.
 - `e01 s01` (autonomy gate) still waits on its three OPEN.md questions.
 
 ## Blockers

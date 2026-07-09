@@ -74,4 +74,11 @@ coherence, not by a live gate; constellation exercises it.
 
 ## Status
 
-Planned into tasks. Ready for execute.
+Both tasks done (t1–t2 in `/work/done/`). Acceptance verified: the gate runs
+`/code-review` always and `/security-review` only on stories that touch a `deployed`
+footprint path; most-specific-by-depth wins, unmatched → deployed, absent-map =
+today; the four grounding cases (absent-map, equal-depth ambiguity, unattended
+default-yes, rename/delete) are all stated; documented in the README gate + config
+sections and the tier-3 example. ri-execute copies in parity. This repo has no live
+gate, so verification was coherence + a worked example; constellation exercises it.
+Merge-ready.
