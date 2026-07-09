@@ -72,4 +72,10 @@ ship as a silent no-op.
 
 ## Status
 
-Planned into tasks. Ready for execute.
+Both tasks done (t1–t2 in `/work/done/`). Acceptance verified: ri-plan surfaces
+module-tagged questions and decisions after reading the code (agent-facing before
+task generation, and in the operator presentation); ri-execute surfaces the same at
+a cold chain start, non-blocking, without repeating what a plan pass just showed.
+Matching is scoped to the `area:` tag/field across both formats; a positive-match
+check on ri-plan-tagged decisions guards against a silent no-op. Skill copies in
+parity. Merge-ready — completes the epic.

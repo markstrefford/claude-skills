@@ -91,4 +91,11 @@ not be re-litigated per story.
 
 ## Status
 
-Compile done. Plan reads the code before writing tasks.
+**All five stories complete and merge-ready.** s01 backlog stage + compile drains
+raw; s02 decisions record tightened with stack-relative module `area` tags; s03
+open-questions queue is live-only, module-tagged, drained by ri-file on resolution;
+s04 ri-state hygiene audit + source-aware escalating gate (blocks only on a direct
+`/ri-state`); s05 surfaces questions/decisions by code module when work starts. All
+task files in `/work/done/`; every skill copy in parity; four decisions filed. The
+epic is whole and merge-ready as one release — merge is the operator's call, after
+which the epic and its stories move to `/work/done/`.

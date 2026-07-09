@@ -7,25 +7,27 @@ updated: 2026-07-08
 
 ## Active focus
 
-`e02-sdlc-lifecycle-hygiene` — s01–s04 all **complete and merge-ready**; only s05
-remains. s04 gave ri-state a hygiene audit (stale/decided/stalled/backlog flags
-from fs+git) and an escalating, source-aware gate: a direct `/ri-state` holds an
-acknowledgement gate once deterministic flags cross the threshold, while chain-end
-runs report but never block. All s01–s04 tasks in `/work/done/`; all skill copies
-in parity. `e01` also active.
+`e02-sdlc-lifecycle-hygiene` — **complete. All five stories done and merge-ready.**
+The SDLC now has a full store lifecycle: backlog stage (s01), module-tagged
+decisions record (s02), live-only drained open-questions queue (s03), ri-state
+hygiene audit + source-aware escalating gate (s04), and module-based surfacing of
+questions/decisions when work starts (s05). Every task in `/work/done/`; all skill
+copies in parity; four decisions filed. Ships as one release on
+`feature/sdlc-lifecycle-hygiene` — merge is the operator's call. `e01` still active.
 
-- **e02** epic is `active`. s01–s04 done and merge-ready; **s05** (contextual
-  surfacing by code module) is the only story left to complete the release. s05
-  builds on s03's module tags (in place). Four decisions in `docs/decisions/`.
+- **e02** epic is `active` and **complete** — all five stories done and
+  merge-ready, awaiting merge as one ri-skills release. Four decisions in
+  `docs/decisions/`. On merge, the epic and its stories move to `/work/done/`.
 - **e01** epic is `active` with a four-story roadmap (s01 gate, s02 auto-progress,
   s03 tier-3 hygiene, s04 publication/README). No story planned yet.
 
 ## Immediate next
 
-- Plan and build **e02 s05** (surface questions/decisions by code module when work
-  starts) — the last story; completing it makes the epic whole for the release.
-- Merge the whole `feature/sdlc-lifecycle-hygiene` branch once s05 lands (operator's
-  call) — the release ships as one piece.
+- Cut the ri-skills release: merge `feature/sdlc-lifecycle-hygiene` (and
+  `feature/cd-repo-guard-hook`) into `main` — operator's call. On merge, move the
+  e02 epic + stories to `/work/done/`.
+- Revisit the two behavioural `raw/` notes (`comments-changes`, `reduce_verbosity`)
+  → global CLAUDE.md, when you're ready.
 
 ## Blockers
 
