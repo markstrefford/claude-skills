@@ -31,6 +31,12 @@ If `.ri/config.md` doesn't exist, default to tier-3 (full rigor) and warn the op
 
 ## The per-task flow
 
+**At chain start (once), surface prior context by module.** Before running the first task, pull the open questions and decisions already tagged to the code the queued tasks touch, so a relevant prior call isn't missed mid-execution. This is a non-blocking heads-up — never a gate; the chain proceeds regardless (the blocking hygiene gate is ri-state's, not this).
+
+- Derive the modules the tasks touch (from their artefacts / the parent story), in the same vocabulary the tags use (skill/agent name here; the stack-relative code unit generally).
+- Match **only inside the `area:` tag/field** — inline `[area: …]` in `/sdlc/OPEN.md`, YAML `area:` in `/sdlc/docs/decisions/` — never a bare body grep.
+- Skip when redundant: if ri-plan already surfaced this module context earlier in the same session (the plan→execute chain), don't repeat it. Surface only on a cold chain start without a fresh plan pass. No matches → surface nothing.
+
 For each task in the operator's list, in order:
 
 ### 1. Read the artefact
