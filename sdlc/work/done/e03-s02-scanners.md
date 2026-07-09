@@ -2,7 +2,7 @@
 id: e03-s02-scanners
 kind: story
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e03-governance-granularity
 sources: [work/active/e03-governance-granularity.md]
@@ -73,4 +73,4 @@ call.
 
 ## Status
 
-Planned into tasks. Awaiting operator checkpoint (the scanner run-scope call) before execute.
+Both tasks done (t1-t2 in /work/done/). Checkpoint cleared: run-scope (secret always, dependency/code footprint-scoped) and per-class disposition (secret any-match blocks, dependency/code high-crit blocks else advisory, can't-run blocks) confirmed. Gate + verdict table + docs + tier-3 example all carry it; ri-execute in parity. Merge-ready.

@@ -2,7 +2,7 @@
 id: e03-s01-footprint-security
 kind: story
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e03-governance-granularity
 sources: [work/active/e03-governance-granularity.md]
