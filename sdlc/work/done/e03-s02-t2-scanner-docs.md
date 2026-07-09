@@ -2,7 +2,7 @@
 id: e03-s02-t2-scanner-docs
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e03-s02-scanners
 created: 2026-07-09
