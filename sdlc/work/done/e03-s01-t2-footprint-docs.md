@@ -2,7 +2,7 @@
 id: e03-s01-t2-footprint-docs
 kind: task
 project: claude-skills
-status: active
+status: done
 autonomy: attended
 parent: e03-s01-footprint-security
 created: 2026-07-09
