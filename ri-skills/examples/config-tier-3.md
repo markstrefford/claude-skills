@@ -28,6 +28,17 @@ footprint:
     - backend/**
     - web/**
 
+# Scanners (optional) — the gate runs these at story close. secret always;
+# dependency/code footprint-scoped. A match/high finding blocks; a scanner that
+# can't run blocks (never green). Omit the block to run none.
+scanners:
+  - command: gitleaks detect --no-banner
+    class: secret
+  - command: pip-audit
+    class: dependency
+  - command: bandit -r backend
+    class: code
+
 # Tier-3 behaviour
 
 Use tier-3 for: load-bearing systems, public deployments, anything where
