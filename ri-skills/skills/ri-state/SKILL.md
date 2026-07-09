@@ -24,8 +24,9 @@ Before writing anything, gather the truth from the filesystem:
 1. List `/sdlc/work/active/`. Note every artefact, its `kind`, its `status`.
 2. For any story or epic in active, check whether it has child tasks (look for tasks naming it as `parent:`).
 3. For any story with tasks, note how many are `active` versus `done`, and which are blocked (`status: blocked` carries a `blocker:` field).
-4. Find the most recently moved item in `/sdlc/work/done/` (highest `updated:` field). This is the "last completed" candidate.
-5. Read `/sdlc/OPEN.md` if it exists. Count its open items. Do not transcribe their content into STATE.
+4. List `/sdlc/work/backlog/`. Note the shaped-but-unstarted items — these are candidates for "Next" when nothing is in flight, not work in progress.
+5. Find the most recently moved item in `/sdlc/work/done/` (highest `updated:` field). This is the "last completed" candidate.
+6. Read `/sdlc/OPEN.md` if it exists. Count its open items. Do not transcribe their content into STATE.
 
 If there's no `/sdlc/work/active/` content, STATE reflects an idle repo. That's a valid state, not an error.
 
@@ -42,6 +43,7 @@ If there's no `/sdlc/work/active/` content, STATE reflects an idle repo. That's 
 **Blockers:** <one line each, or "none">
 
 **Open questions:** <count, e.g. "3 — see OPEN.md"> or <"none">
+**Hygiene:** <count, e.g. "2 flags — see run output"> or <"clean">
 ```
 
 Rules:
@@ -50,8 +52,9 @@ Rules:
 - Operator-grammar throughout. The one-liners use the same language as the epic roadmap entries — not method names, file paths, or test names.
 - Under 30 lines. If you'd write more, you're putting detail in the wrong file.
 - "Blockers" line lists every blocked artefact in active with its blocker text in one phrase, or says "none."
-- "Next" is derived: the next task in sequence for the active story, or the next story in the epic roadmap if no story is active.
+- "Next" is derived: the next task in sequence for the active story, or the next story in the epic roadmap if no story is active, or a shaped item from `/sdlc/work/backlog/` if nothing is active.
 - "Open questions" gives a count only, not content. The content lives in `OPEN.md`.
+- "Hygiene" gives the flag count only, not the detail. The flags are listed in the ri-state run output (see the hygiene audit), never expanded into STATE.
 
 If the repo has multiple concurrently active stories (you're juggling work in two lines within one repo), list each on its own line under "Active focus." This is the within-repo cross-line view. The cross-repo view stays parked as the dashboard.
 
@@ -61,9 +64,40 @@ The cursor is derived, not invented. Each line answers a specific question from 
 
 - **Active focus:** the story or task whose `status: active` was most recently updated. If multiple, list all currently active.
 - **Last completed:** the most recently moved artefact in `/sdlc/work/done/`.
-- **Next:** look at the active story's task sequence, or the active epic's roadmap, and find the next item not yet done. If nothing's queued, write "operator's call" — meaning the queue is empty and the operator picks what comes next.
+- **Next:** look at the active story's task sequence, or the active epic's roadmap, and find the next item not yet done. If nothing's queued in active, a shaped item in `/sdlc/work/backlog/` is the likely next pick — name it (starting it promotes it to active). Only if backlog is also empty, write "operator's call" — meaning the queue is empty and the operator picks what comes next.
 - **Blockers:** any artefact in active with `status: blocked`. Each gets one line.
 - **Open questions:** count of items in `OPEN.md`. If `OPEN.md` doesn't exist, write "none."
+- **Hygiene:** count of flags raised by the hygiene audit below. "clean" if none.
+
+## Hygiene audit
+
+After the stores are read and the cursor derived, run a hygiene audit. It is the forcing function that keeps the stores from silting up: it surfaces neglect the operator would otherwise have to remember to look for. Like the cursor, every flag is **derived from the filesystem or git, never invented**.
+
+Flag, with the reason in one phrase each:
+
+- **Stale open question** — an `OPEN.md` entry whose date is older than **30 days** with no update.
+- **Already-decided question (advisory)** — an `OPEN.md` entry whose wording reads as already resolved (a "we decided X" tail that never drained). This is a soft, model-judged signal — report it so it can be drained, but it is **advisory only** and never contributes to the escalation count (t2), so blocking stays reproducible.
+- **Stalled active work** — an artefact in `/sdlc/work/active/` whose most recent commit is older than **2 days**. Judge this from git: `git log -1 --follow -- <artefact path>` on the current branch (the `--follow` keeps the history across the backlog→active `git mv`). Two honesty caveats, stated rather than papered over: an artefact with **no commit history yet** (freshly created or just promoted) is treated as **fresh, not stalled**; and the signal is **relative to the current branch** — ri-state cannot see commits on branches it isn't on, so work developed on an unmerged branch may read as stalled when the audit runs on `main`. Treat the stalled flag as a useful nudge, not a precise truth.
+- **Stale backlog item** — an artefact in `/sdlc/work/backlog/` older than **60 days** (advisory).
+
+Thresholds are named defaults, easy to change: active-stalled **2 days**, open-question-stale **30 days**, backlog-stale **60 days**.
+
+Output: a short **Hygiene** list in this run's output (one line per flag, operator-grammar), and a one-line count in `STATE.md` (`Hygiene: N flags` / `clean`). Never expand the flag list into STATE — the detail lives in the run output.
+
+### The escalating gate (source-aware)
+
+Whether the audit merely reports or *holds a gate* depends on how ri-state was invoked, carried by an explicit token — never inferred:
+
+- **Report-only** — the invocation carries a `report-only` token (emitted by a skill calling ri-state at chain end, see below). Report the flags and finish; never block. This keeps authorised chains — including an `auto` `ri-execute` run — moving.
+- **Direct / blocking** — no token (a direct operator `/ri-state`, or any unknown source). Report the flags, and if they cross the escalation threshold, hold an **acknowledgement gate**.
+
+**Absence of the token defaults to blocking.** Do not infer the source any other way: an untokened run is treated as direct. This fails safe — a caller that forgets the token causes an over-cautious gate, never a silently-defeated one.
+
+**Escalation threshold (named default, easy to change):** cross when there are **≥5 deterministic flags**, or any single deterministic flag past a hard age — **active work stalled > 5 days** or **open question > 90 days**. Only deterministic signals (the age/staleness flags) count toward this; the advisory already-decided and stale-backlog signals are reported but never contribute, so whether a direct run blocks is reproducible.
+
+**What the acknowledgement gate is:** STATE still regenerates and commits exactly as normal — the snapshot identity and the anti-drift rule are untouched. The gate is *conversational*: the run is **not complete** until the operator either clears the flagged items (resolve stale questions via `ri-file`, move or unblock stalled work) or explicitly acknowledges them for this run. It never refuses to write STATE and never edits OPEN itself.
+
+**Emitting the token (the three callers):** when `ri-compile`, `ri-plan`, or `ri-execute` invoke ri-state at their chain end, they state the invocation is `report-only`. Every such handoff must carry it; a missing token there would (safely) turn an authorised chain into a blocking review, so it is required, not optional.
 
 ## OPEN.md handling
 
@@ -76,10 +110,10 @@ This skill does not write to `OPEN.md`. Other skills do:
 Each appends a single-line entry to `OPEN.md`:
 
 ```markdown
-- <ISO date> <one-line question, with enough context that the operator can answer without re-reading artefacts> [<artefact id this relates to, if any>]
+- <ISO date> <one-line question, with enough context that the operator can answer without re-reading artefacts> [<artefact id this relates to, if any>] [area: <module(s)>]
 ```
 
-When the operator resolves an open question, they (or a skill on their behalf) delete the line and file the resolution as an ADR if substantive, or fold it into the relevant artefact.
+When an open question is resolved, `ri-file` drains it (see its "Resolving an open question" flow): on the operator's call it removes the line and either files a durable resolution as an area-tagged decision, hands a becomes-work answer to `ri-compile`, or deletes a trivial one. `ri-file` is the only skill that removes an entry; the acting skills only append; `ri-state` never touches `OPEN.md`.
 
 `ri-state` only reads `OPEN.md` to count entries.
 
@@ -101,7 +135,7 @@ If `OPEN.md` was touched in the same session by another skill, those edits also 
 
 ## Hard rules
 
-- Never edit `OPEN.md` from this skill. Its content is curated by the skills that raise and resolve questions.
+- Never edit `OPEN.md` from this skill. Its content is appended by the acting skills (`ri-compile`/`ri-plan`/`ri-execute`) and removed by `ri-file` on resolution; `ri-state` only reads it.
 - Never invent state that the filesystem doesn't support. The cursor is derived from `/sdlc/work/active/` and `/sdlc/work/done/`, not from session memory.
 - Never let STATE.md exceed 30 lines. If you'd write more, the detail belongs somewhere else.
 - Never put engineering grammar in STATE.md. Operator-grammar only, same altitude as the epic roadmap.
@@ -113,7 +147,8 @@ If `OPEN.md` was touched in the same session by another skill, those edits also 
 - Whether to act on the cursor's "Next" suggestion or pick something else
 - Whether any blockers need attention before more work proceeds
 - Whether the open question count warrants a thinking session
+- On a direct run that crosses the hygiene threshold: whether to clear the flagged items now or acknowledge them for this run (the gate waits on this call)
 
 ## What this skill does without re-asking
 
-Lists active, reads done, counts open questions, derives the cursor, writes the file, commits. The operator doesn't approve STATE — it's a derivation, not a decision.
+Lists active, reads done and backlog, counts open questions, derives the cursor, runs the hygiene audit, writes the file, commits. STATE itself is a derivation, not a decision — the operator doesn't approve the cursor. The one exception is the hygiene gate: on a **direct** run whose flags cross the escalation threshold, ri-state does re-ask — it holds the acknowledgement gate until the operator clears or acknowledges the flags. STATE is still written and committed; only the run's completion waits. A **report-only** run (a skill's chain-end handoff) never re-asks.

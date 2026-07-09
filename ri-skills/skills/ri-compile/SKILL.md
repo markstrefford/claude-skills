@@ -54,6 +54,10 @@ Before writing any artefact content, decide what each piece of raw material shou
 - **addition to existing** — append to an existing artefact, link source
 - **discard** — not worth shaping; the thought has served its purpose
 
+A work item (task, story, or epic) is routed by whether the operator is starting it now: to **active** (`/sdlc/work/active/`) if work begins now, or to **backlog** (`/sdlc/work/backlog/`) if it is shaped but not yet started. Backlog is the home for shaped-but-unstarted work so it neither lingers in the capture zone nor gets forced prematurely into active. A backlog item has a defined way out — starting work on it promotes it to active (owned by `ri-plan`).
+
+**Drain invariant:** every shaped item leaves the capture zone for exactly one home — docs, backlog, active, or discard. Nothing shaped stays in `/sdlc/raw/`. This is per-item: un-shaped captures may still wait in raw for a later pass (the inbox model is preserved); the rule is that no item you have shaped is left behind there.
+
 Present the proposal as:
 
 > Raw file `<path>` → propose **<shape>** because <one-line reason>.
@@ -70,6 +74,8 @@ For multiple raw items, list them all with proposed shapes. Wait for operator ap
 The operator approves both the epic and the story sequence. If the story breakdown changes during approval, that's fine — the roadmap reflects the final approved shape. The point is the operator doesn't see an epic land with a story list they didn't sign off on.
 
 Stories under a proposed epic don't get separate artefact files at compile time. They exist as one-liner entries in the epic's roadmap until each one is compiled individually (or until the operator asks to break them out as separate story artefacts now).
+
+**Number the epic and its children.** A new epic gets a sequential two-digit number with a readable name: `e<N>-<name>` (e.g. `e01-governor-foresight`), assigned at compile time as the next unused epic number in the repo. Stories and tasks under it drop the long epic-name prefix for the compact number — story `e<N>-s<M>-<slug>`, task `e<N>-s<M>-t<K>-<slug>` (`s<M>` two digits, `t<K>` one). The number keeps two concurrent epics from colliding on `s01/s02` and makes parentage and ordering visible at a glance. Number new epics going forward; pre-existing name-based epics (`epic-<name>` with `<name>-s<N>` children) are **not** renumbered until they are done — the scheme is deliberately mixed in the interim.
 
 ### 3. Generate the artefact, thin
 
@@ -164,7 +170,7 @@ The senior-staff-engineer cannot rescue a confabulated compile. If the source ma
 
 For each compiled artefact:
 
-1. Write the artefact to its correct location (`/sdlc/work/active/` for work items, `/sdlc/docs/...` for docs)
+1. Write the artefact to its correct location (`/sdlc/work/active/` for work items being started now, `/sdlc/work/backlog/` for shaped-but-unstarted work items, `/sdlc/docs/...` for docs)
 2. Confirm the `sources:` field references the original raw path
 3. Delete the original raw file (only after the artefact is committed)
 
@@ -179,20 +185,20 @@ Never delete from `/sdlc/raw/` without first producing a compiled artefact that 
 If the compile surfaced questions that need the operator's judgment but aren't blocking (deferred decisions, ambiguities the operator can resolve later, structural calls best made after seeing more), append a one-line entry to `/sdlc/OPEN.md` for each:
 
 ```
-- <YYYY-MM-DD> <one-line question, with enough context that the operator can answer without re-reading the artefact> [<artefact id this relates to>]
+- <YYYY-MM-DD> <one-line question, with enough context that the operator can answer without re-reading the artefact> [<artefact id this relates to>] [area: <module(s)>]
 ```
 
 Rules for OPEN.md writes:
 
 - Create the file if it doesn't exist.
-- Append only. Never overwrite or rearrange existing entries.
+- Append only. Never overwrite or rearrange existing entries. (Removing an entry happens only on resolution, and only `ri-file` does that — see its resolution flow.)
 - One question per line.
 - Operator-grammar. The question should be answerable by reading the line alone.
-- Tag with the artefact id so the operator knows which work the question belongs to.
+- Tag with the artefact id so the operator knows which work the question gates, and with an `area:` tag naming the code module(s) the question touches (the stack-relative code unit — Python module/package, JS/React module or component, skill/agent here; list more than one when it spans them). The area tag is what lets the question be surfaced when work later starts on that code.
 
 Questions that block the current compile step belong in the conversation with the operator now, not in OPEN.md. OPEN.md is for the deferred judgment queue.
 
-After OPEN.md (if anything was added), regenerate `/sdlc/STATE.md`. The "Active focus" line probably points at the newly compiled artefact. STATE will reflect the new OPEN.md count.
+After OPEN.md (if anything was added), regenerate `/sdlc/STATE.md`. This is a chain-end handoff — invoke ri-state in `report-only` mode (emit the report-only token) so its hygiene gate reports but never blocks this chain. The "Active focus" line probably points at the newly compiled artefact. STATE will reflect the new OPEN.md count.
 
 ## Tier sensitivity
 

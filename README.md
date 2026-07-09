@@ -16,7 +16,7 @@ Most AI development setups suffer one of two failure modes. Either there's no st
 
 Five principles drove the design:
 
-**Filesystem as source of truth.** No Linear, no Jira, no SaaS dashboard. Artefacts are markdown files with YAML frontmatter. Git history is the audit trail. State is derived from `/work/active/` and `/work/done/` rather than tracked in a parallel system. Migrating to a different substrate would be mechanical, not a rebuild.
+**Filesystem as source of truth.** No Linear, no Jira, no SaaS dashboard. Artefacts are markdown files with YAML frontmatter. Git history is the audit trail. State is derived from `/work/backlog/`, `/work/active/`, and `/work/done/` rather than tracked in a parallel system. Migrating to a different substrate would be mechanical, not a rebuild.
 
 **Thin compile, grounded plan.** Compile produces operator-readable shape (outcome, scope, acceptance, standing gate). It refuses to invent engineering detail it hasn't grounded in source material. Plan reads the actual code before writing test specs and implementation notes. This stops the failure mode where compile generates 500-line stories full of confabulated function names and made-up test specifications.
 
@@ -61,6 +61,7 @@ CLAUDE.md          # repo-specific context, points to user-level skills
 /sdlc/
   raw/             # captured material, no rules
   work/
+    backlog/       # shaped but not started
     active/        # things being worked on
     done/          # archived
   docs/
@@ -133,7 +134,7 @@ In each repo where you want to use the skills:
 
 ```bash
 cd <your-repo>
-mkdir -p .ri sdlc/raw sdlc/work/active sdlc/work/done sdlc/docs/{decisions,runbooks,strategy,architecture}
+mkdir -p .ri sdlc/raw sdlc/work/backlog sdlc/work/active sdlc/work/done sdlc/docs/{decisions,runbooks,strategy,architecture}
 cp /path/to/claude-skills/ri-skills/examples/config-tier-2.md .ri/config.md  # or tier-1 / tier-3
 ```
 

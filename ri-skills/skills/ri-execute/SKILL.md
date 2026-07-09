@@ -31,6 +31,12 @@ If `.ri/config.md` doesn't exist, default to tier-3 (full rigor) and warn the op
 
 ## The per-task flow
 
+**At chain start (once), surface prior context by module.** Before running the first task, pull the open questions and decisions already tagged to the code the queued tasks touch, so a relevant prior call isn't missed mid-execution. This is a non-blocking heads-up — never a gate; the chain proceeds regardless (the blocking hygiene gate is ri-state's, not this).
+
+- Derive the modules the tasks touch (from their artefacts / the parent story), in the same vocabulary the tags use (skill/agent name here; the stack-relative code unit generally).
+- Match **only inside the `area:` tag/field** — inline `[area: …]` in `/sdlc/OPEN.md`, YAML `area:` in `/sdlc/docs/decisions/` — never a bare body grep.
+- Skip when redundant: if ri-plan already surfaced this module context earlier in the same session (the plan→execute chain), don't repeat it. Surface only on a cold chain start without a fresh plan pass. No matches → surface nothing.
+
 For each task in the operator's list, in order:
 
 ### 1. Read the artefact
@@ -43,6 +49,8 @@ Open the task file. Confirm:
 - Test specification is present (required for tier-2 and tier-3)
 
 If status is `blocked`, stop the chain. Report which task is blocked and the blocker text. If the test spec is missing on a tier-2 or tier-3 task, stop the chain and tell the operator the task needs Plan-time work first.
+
+Execute advances items in `/sdlc/work/active/` only. If pointed at an item still in `/sdlc/work/backlog/`, promote it to active first (starting a backlog item is its defined exit); if that item is a story or epic with no tasks yet, hand off to `ri-plan` rather than executing it in place. Planning is the primary promotion owner — this is the safety net.
 
 ### 2. Resolve the effective tier and autonomy
 
@@ -86,6 +94,8 @@ Tier-1 skips the verifier unless the task involves anything load-bearing (auth, 
 
 Commit message format: `<task-id>: <one-line outcome from the task spec>`. Reference the task id always.
 
+**Moving the file to `/sdlc/work/done/`:** use `git mv` only when the task file is already tracked. If it reports `fatal: not under version control` (a task file created this session and never committed), fall back to plain `mv` and stage the result with `git add -A`. Never let the move step fail the chain — the move is bookkeeping, not work.
+
 ### 8. Move to the next task
 
 Unless the chain has stopped (review pause, verifier failure, blocked task, ambiguity), proceed to the next task in the list. Don't re-ask the operator.
@@ -110,18 +120,18 @@ Whether the chain finished cleanly or stopped early:
 1. **If execution surfaced questions that need the operator's judgment but aren't blocking** (deferred design calls, ambiguity the operator should think about, choices that aren't urgent but matter), append a one-line entry to `/sdlc/OPEN.md` for each:
 
    ```
-   - <YYYY-MM-DD> <one-line question with enough context to answer without re-reading> [<task or story id>]
+   - <YYYY-MM-DD> <one-line question with enough context to answer without re-reading> [<task or story id>] [area: <module(s)>]
    ```
 
    Rules for OPEN.md writes:
    - Create the file if it doesn't exist.
-   - Append only. Never overwrite or rearrange existing entries.
+   - Append only. Never overwrite or rearrange existing entries. (Removing an entry happens only on resolution, and only `ri-file` does that — see its resolution flow.)
    - One question per line, operator-grammar.
-   - Tag with the artefact id so the operator knows which work the question belongs to.
+   - Tag with the artefact id so the operator knows which work the question gates, and with an `area:` tag naming the code module(s) the question touches (the stack-relative code unit — Python module/package, JS/React module or component, skill/agent here; list more than one when it spans them). The area tag is what lets the question be surfaced when work later starts on that code.
 
    Questions that stopped the chain (verifier failures, ambiguity that couldn't be resolved) belong in the operator conversation now, not OPEN.md. OPEN.md is for the deferred judgment queue.
 
-2. Run `ri-state` to regenerate `/sdlc/STATE.md`. STATE will reflect the new OPEN.md count if anything was added.
+2. Run `ri-state` to regenerate `/sdlc/STATE.md` — a chain-end handoff, so invoke it in `report-only` mode (emit the report-only token) so its hygiene gate reports but never blocks the chain (an `auto` run must never stall on a hygiene review). STATE will reflect the new OPEN.md count if anything was added.
 
 3. **If the chain just completed the last active task of a story, run the governance gate** (see below) before anything else. A story whose tasks are all in `/sdlc/work/done/` is a merge candidate, and the gate decides whether it's merge-ready.
 

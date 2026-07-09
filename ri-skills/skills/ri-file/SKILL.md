@@ -55,7 +55,7 @@ Filler outputs to refuse:
 
 Before generating any content, list what you'd file and where:
 
-> - Architectural decision → `/sdlc/docs/decisions/<NNNN-slug>.md` because <one-line reason>
+> - Architectural decision → `/sdlc/docs/decisions/<slug>.md` because <one-line reason>
 > - Runbook update → `/sdlc/docs/runbooks/<existing-name>.md` adding section X
 > - Spec divergence → update `/sdlc/work/active/<story-id>.md` outcome from X to Y
 
@@ -69,9 +69,10 @@ For each approved item, generate the right structure:
 
 ```yaml
 ---
-id: <NNNN-slug>           # sequential numeric prefix per repo's docs/decisions/
+id: <slug>                # short descriptive slug, e.g. sdlc-store-lifecycle (no numeric prefix)
 kind: decision
 project: <from config>
+area: [<module(s)>]       # the code module(s) this decision touches, so it can be found by the code it concerns. Stack-relative, module granularity: a Python module/package, a JS/React top-level module or component, or a skill/agent here. List more than one when the decision spans them; go finer than a module (a file) only when the change genuinely is one file. Not an epic-id — epics stack over the same code.
 sources: [<where this came from — task id, story id, raw note, session>]
 created: <today>
 updated: <today>
@@ -167,6 +168,22 @@ Doc-only changes to `/docs/` land directly on `main`. Spec divergence updates to
 
 Hand off to `ri-state` at the end. The newly filed artefacts will appear in the next STATE regeneration.
 
+## Resolving an open question
+
+`ri-file` owns resolving an entry in `/sdlc/OPEN.md` and draining it from the queue. Ownership across the skills is unambiguous: the acting skills (`ri-compile`, `ri-plan`, `ri-execute`) only ever **append** questions; `ri-state` **never touches** `OPEN.md`; `ri-file` is the one skill that **removes** an entry, and only as part of resolving it.
+
+Trigger: the operator asks to resolve a question, or another skill hands `ri-file` a resolvable one.
+
+1. **Read** the question and its tags (the work tag and the module-area tag).
+2. **Propose the disposition** — one of: *durable* (a lasting call worth recording), *becomes-work* (the answer is a piece of work to do), or *trivial* (answered, nothing lasting to keep).
+3. **Escalate to the operator.** `ri-file` proposes; the operator decides the disposition. `ri-file` does the bookkeeping, not the judging.
+4. **Drain** in the same step, per the operator's call:
+   - *durable* → generate the ADR via the decision path above (area-tagged, slug id, durability bar), then delete the `OPEN.md` line.
+   - *becomes-work* → hand the question to `ri-compile` as source material so it shapes and routes the backlog-or-active item (that routing is `ri-compile`'s owned logic — do not re-implement it here), then delete the line once the work item exists.
+   - *trivial* → delete the line only.
+
+The line always leaves the queue on resolution, so a resolved question never lingers. Commit the resolution (the decision or work item, plus the `OPEN.md` removal) together.
+
 ## Tier sensitivity
 
 **Tier 1:** Filing is usually skipped. Quick scripts don't produce ADR-worthy work. If the operator explicitly asks to file something from tier-1 work, do it, but default to "nothing to file."
@@ -179,7 +196,7 @@ Hand off to `ri-state` at the end. The newly filed artefacts will appear in the 
 
 - Never file filler. If nothing was decided, learned, or shifted, write nothing.
 - Never duplicate content already in commit messages, task artefacts, or story specs.
-- Never write an ADR for a trivial decision. ADRs are for choices that affect future work.
+- Never write an ADR for a trivial decision. ADRs are for choices that affect future work — durable, consequential calls. Trivial closes, including a resolved open question that established nothing lasting, die unrecorded rather than becoming filler records.
 - Never let operator-grammar leak below architect altitude in Context, Decision, or Consequences. Implementation detail belongs in Alternatives or stays out.
 - Never record an ADR's decisions without a plain-terms lead — each decision as call + consequence, one line, operator-grammar, before any engineering detail. A multi-decision ADR (D1..DN) gets one plain-terms line per decision. A decision record only a developer can parse has failed at being a record.
 - Never edit `CLAUDE.md`, `~/.claude/CLAUDE.md`, or any `.ri/config.md` without explicit operator approval. These encode opinions and must sound like the operator.

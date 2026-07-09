@@ -34,7 +34,7 @@ If the config is missing, default to tier-3 and warn the operator.
 
 ### 1. Read the story and its surroundings
 
-Open the story artefact. Confirm:
+Open the story artefact. If it lives in `/sdlc/work/backlog/`, promote it first: move the file to `/sdlc/work/active/` (refresh its `updated:` date). Planning a story is the moment work on it starts, so this is where the backlog→active exit is owned — a story is promoted once, when it is planned. Then confirm:
 
 - `kind: story`
 - `status: active`
@@ -54,6 +54,12 @@ For each stack the story plausibly touches (use the story's outcome and scope, t
 - Note module boundaries, type definitions, and any seams the work will cross
 
 This is the load-bearing step. Without it, task specs are confabulation. If the story names files that don't exist yet (work that creates new modules), say so — the task spec for that work can reference the planned new file by name, but acceptance is tied to what will exist.
+
+**Surface prior context by module.** Now that you know the code the story touches, pull the open questions and decisions already tagged to those modules — so prior context is applied to the plan instead of rediscovered later. This is the payoff of the module-area tags.
+
+- Express the modules the story touches in the **same vocabulary the tags use** — the stack-relative code unit (a skill/agent name here, a Python module/package, a JS/React module or component). Note: this vocabulary is a convention with no registry, so the token you derive must match the token the tags carry, or the match silently misses.
+- Match **only inside the `area:` tag/field**, never a bare body grep: in `/sdlc/OPEN.md` inside the inline `[area: …]` tag (comma-list), and in `/sdlc/docs/decisions/` in the YAML `area:` frontmatter. A decision that merely mentions a module in its prose must not match.
+- Let the matches inform the task sequence here (agent-facing), and carry them into the operator presentation at approval (step 7). If there are genuinely no matches, surface nothing — don't manufacture a section. (Sanity check the matcher isn't silently broken: planning work that touches the `ri-plan` skill should surface the decisions tagged `area: […ri-plan…]`.)
 
 ### 3. The anti-gap check
 
@@ -97,6 +103,7 @@ Present the plan to the operator. The summary at this point is:
 - The task sequence as one-liner roadmap (already in the epic)
 - Any senior-staff findings applied, briefly
 - Any open questions raised during planning
+- Prior context surfaced by module (from step 2): the open questions and decisions already tagged to the code this story touches, so the operator can apply or resolve them alongside the plan
 
 Wait for approval (or edits) before committing. The operator approves the shape and may edit task one-liners directly. Implementation detail in the task bodies is not for the operator's approval — they trust the grounding step.
 
@@ -109,20 +116,20 @@ Lands on `main` since this is planning work, not execution. Execution work cuts 
 **If planning surfaced questions that need the operator's judgment but aren't blocking** (deferred architectural decisions, ambiguities the operator can answer later, structural calls best made after seeing the first task execute), append a one-line entry to `/sdlc/OPEN.md` for each:
 
 ```
-- <YYYY-MM-DD> <one-line question with enough context to answer without re-reading the artefact> [<story or task id>]
+- <YYYY-MM-DD> <one-line question with enough context to answer without re-reading the artefact> [<story or task id>] [area: <module(s)>]
 ```
 
 Rules for OPEN.md writes:
 
 - Create the file if it doesn't exist.
-- Append only. Never overwrite or rearrange existing entries.
+- Append only. Never overwrite or rearrange existing entries. (Removing an entry happens only on resolution, and only `ri-file` does that — see its resolution flow.)
 - One question per line.
 - Operator-grammar. The question should be answerable by reading the line alone.
-- Tag with the artefact id so the operator knows which work the question belongs to.
+- Tag with the artefact id so the operator knows which work the question gates, and with an `area:` tag naming the code module(s) the question touches (the stack-relative code unit — Python module/package, JS/React module or component, skill/agent here; list more than one when it spans them). The area tag is what lets the question be surfaced when work later starts on that code.
 
 Questions that block the plan belong in the conversation with the operator now, not in OPEN.md. OPEN.md is for the deferred judgment queue.
 
-Then regenerate `/sdlc/STATE.md`. Active focus points at the story now ready for execute.
+Then regenerate `/sdlc/STATE.md` — a chain-end handoff, so invoke ri-state in `report-only` mode (emit the report-only token) so its hygiene gate reports but never blocks this chain. Active focus points at the story now ready for execute.
 
 ## Task body structure
 
