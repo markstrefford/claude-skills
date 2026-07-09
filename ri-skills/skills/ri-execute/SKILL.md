@@ -149,10 +149,19 @@ The per-task verifier checks each task against its own spec. The governance gate
 
 **What it runs.** Two existing Claude Code skills, over the story branch diff:
 
-- `/security-review` — security review of the branch's pending changes (injection, authz, secret handling, unsafe deserialisation, and the like).
-- `/code-review` — correctness bugs and reuse/simplification findings across the accumulated diff.
+- `/code-review` — correctness bugs and reuse/simplification findings across the accumulated diff. **Always runs.**
+- `/security-review` — security review of the branch's pending changes (injection, authz, secret handling, unsafe deserialisation, and the like). **Runs only when the story's changed files touch externally-deployed code** — see Footprint scoping below.
 
 Add dependency and secret scanners here too if the repo declares them (e.g. `npm audit`, `pip-audit`, `bandit`, `gitleaks`) — the gate orchestrates whatever the config names; it doesn't reimplement review.
+
+**Footprint scoping.** A repo can declare a `footprint:` map in `.ri/config.md` — an `internal:` and a `deployed:` list of path globs — saying which code is externally reachable. When it does, the gate classifies the story's changed files (the same diff it already computes vs `main`) and runs `/security-review` only if any changed path is **deployed**. `/code-review` always runs regardless. Rules:
+
+- **Classify by changed path, not story intent.** A story can span both surfaces; any deployed path in its diff is enough to require the security review.
+- **Most specific rule wins, by path-segment depth** — the rule whose matched prefix has the most path segments (`src/analysis/**`, depth 2, beats `src/**`, depth 1). A `**` matches across separators.
+- **Unmatched path → deployed.** Fail safe toward running the review.
+- **No footprint map → every path is deployed** → the security review runs on everything, identical to today. `security-gate: required` stays the master on/off switch; the footprint block is optional and additive. When the flag is absent the gate doesn't fire at all.
+- **Ambiguous** — only rules of *equal* path-segment depth classifying a path into conflicting footprints (the one case depth doesn't resolve) — put it to the operator, defaulting to running the review. If the run is **unattended** (an `auto` chain, no operator present), do not stall: default to running the review.
+- **Renames and deletions** fall out of path-glob matching cleanly: a rename classifies on either endpoint (deployed on either side → run); a deleted deployed path still carries a deployed path and still triggers the review.
 
 **What the verdict means.**
 
