@@ -152,7 +152,11 @@ The per-task verifier checks each task against its own spec. The governance gate
 - `/code-review` — correctness bugs and reuse/simplification findings across the accumulated diff. **Always runs.**
 - `/security-review` — security review of the branch's pending changes (injection, authz, secret handling, unsafe deserialisation, and the like). **Runs only when the story's changed files touch externally-deployed code** — see Footprint scoping below.
 
-Add dependency and secret scanners here too if the repo declares them (e.g. `npm audit`, `pip-audit`, `bandit`, `gitleaks`) — the gate orchestrates whatever the config names; it doesn't reimplement review.
+**Scanners.** A repo can declare scanners in `.ri/config.md` under `security-gate` — each entry a `command` to run and a `class`: `dependency` (e.g. `npm audit`, `pip-audit`), `code` (SAST, e.g. `bandit`), or `secret` (e.g. `gitleaks`). At story close the gate runs them, over the same story-branch diff vs `main` as the reviews. The gate orchestrates the named command and reads its output — it never reimplements the scan (note the mechanical difference from the reviews: scanners are external CLI tools whose result the gate must read and normalize).
+
+- **When each runs.** `secret` scanners always run when the gate fires (a leaked secret is dangerous regardless of surface). `dependency` and `code` scanners run under the footprint rule above — only when a changed path is deployed.
+- **Severity normalization.** Each tool's native severity (`npm audit` low→critical, `pip-audit` CVSS, `bandit` severity×confidence, `gitleaks` none) maps to block-worthy versus advisory; the default block threshold is high/critical, overridable per scanner in config. A secret match is always block-worthy.
+- **Can't run.** A declared scanner that fails to run — not installed, or exits non-zero for a reason other than findings — surfaces and blocks; it never passes green (fail toward rigour).
 
 **Footprint scoping.** A repo can declare a `footprint:` map in `.ri/config.md` — an `internal:` and a `deployed:` list of path globs — saying which code is externally reachable. When it does, the gate classifies the story's changed files (the same diff it already computes vs `main`) and runs `/security-review` only if any changed path is **deployed**. `/code-review` always runs regardless. Rules:
 
@@ -170,6 +174,10 @@ Add dependency and secret scanners here too if the repo declares them (e.g. `npm
 | Security finding (any severity) on a `security-gate: required` repo | **Blocks.** Story is not merge-ready. Report to the operator now. The fix is new task work — hand the finding back to `ri-plan`, or fix in place if trivial and re-run the gate. |
 | High-severity correctness bug from `/code-review` | **Blocks.** Same disposition as above. |
 | Low-severity correctness or cleanup/simplification finding | **Advisory.** Append to `/sdlc/OPEN.md` (operator-grammar, tagged with the story id) and continue. Don't block a story on a cleanup. |
+| Secret-scanner match | **Blocks.** Any match, no severity axis — a leaked secret is not merge-ready. |
+| Dependency/code-scanner finding at or above the block threshold (default high/critical) | **Blocks.** Same disposition as a security finding. |
+| Dependency/code-scanner finding below the threshold (low/moderate) | **Advisory.** Logged to `/sdlc/OPEN.md`, tagged with the story id; continue. |
+| A declared scanner that can't run (missing, error exit) | **Blocks.** Surfaces the failure; never passes green (fail toward rigour). |
 | Clean | Story is merge-ready. Say so plainly in the summary. Merging is the operator's action — the gate clears the path, it doesn't merge. |
 
 The gate never merges and never marks the story `done` on its own — story-level state and the merge are the operator's call. Its job is to produce a verdict, block when the verdict is load-bearing, and route everything else to the right queue.
