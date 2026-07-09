@@ -86,6 +86,8 @@ not be re-litigated per story.
   - t1 — add the hygiene audit that flags stale/decided/stalled items, staleness judged by commit history
   - t2 — make the audit escalate and source-aware: block only on a direct refresh, report-only at chain end
 - s05 — surface relevant open questions and decisions automatically when work starts on the code module they touch
+  - t1 — ri-plan surfaces module-tagged questions and decisions after reading the code, before writing tasks
+  - t2 — ri-execute surfaces the same as a lighter, non-blocking heads-up at chain start
 
 ## Status
 
