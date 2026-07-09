@@ -55,6 +55,12 @@ For each stack the story plausibly touches (use the story's outcome and scope, t
 
 This is the load-bearing step. Without it, task specs are confabulation. If the story names files that don't exist yet (work that creates new modules), say so — the task spec for that work can reference the planned new file by name, but acceptance is tied to what will exist.
 
+**Surface prior context by module.** Now that you know the code the story touches, pull the open questions and decisions already tagged to those modules — so prior context is applied to the plan instead of rediscovered later. This is the payoff of the module-area tags.
+
+- Express the modules the story touches in the **same vocabulary the tags use** — the stack-relative code unit (a skill/agent name here, a Python module/package, a JS/React module or component). Note: this vocabulary is a convention with no registry, so the token you derive must match the token the tags carry, or the match silently misses.
+- Match **only inside the `area:` tag/field**, never a bare body grep: in `/sdlc/OPEN.md` inside the inline `[area: …]` tag (comma-list), and in `/sdlc/docs/decisions/` in the YAML `area:` frontmatter. A decision that merely mentions a module in its prose must not match.
+- Let the matches inform the task sequence here (agent-facing), and carry them into the operator presentation at approval (step 7). If there are genuinely no matches, surface nothing — don't manufacture a section. (Sanity check the matcher isn't silently broken: planning work that touches the `ri-plan` skill should surface the decisions tagged `area: […ri-plan…]`.)
+
 ### 3. The anti-gap check
 
 If the operator has flagged something as "missing from the story" or "needs adding here," check the epic's roadmap before agreeing. If the missing piece is scheduled in a later story, say so plainly: "X is in story 5, by design — not a gap in this one." Don't force it into the current story and trigger a rebuild later.
@@ -97,6 +103,7 @@ Present the plan to the operator. The summary at this point is:
 - The task sequence as one-liner roadmap (already in the epic)
 - Any senior-staff findings applied, briefly
 - Any open questions raised during planning
+- Prior context surfaced by module (from step 2): the open questions and decisions already tagged to the code this story touches, so the operator can apply or resolve them alongside the plan
 
 Wait for approval (or edits) before committing. The operator approves the shape and may edit task one-liners directly. Implementation detail in the task bodies is not for the operator's approval — they trust the grounding step.
 
