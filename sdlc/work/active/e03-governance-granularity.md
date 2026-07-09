@@ -69,6 +69,8 @@ toward running the security review, never toward skipping it.
   - t1 — the gate reads a repo's footprint map and runs security-review only on deployed changes
   - t2 — document the optional footprint block and show it in the tier-3 config example
 - s02 — wire a repo's declared dependency and secret scanners into the same gate
+  - t1 — the gate runs declared scanners (secret always, dependency/code footprint-scoped), findings through the existing verdict
+  - t2 — document declaring scanners and show it in the tier-3 example
 - s03 — enforce the version-pairing and public-deploy invariants at the gate rather than only reading them
 
 ## Status
