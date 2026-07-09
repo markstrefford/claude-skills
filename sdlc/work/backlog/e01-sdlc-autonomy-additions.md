@@ -69,6 +69,11 @@ models that can disagree. s01 plans and reviews first, ahead of the rest.
 
 ## Status
 
+**Parked in backlog (2026-07-09).** Shaped and reviewed but never planned; set
+aside as unrelated to the governance/lifecycle line of work. Promote back to
+`/work/active/` (via ri-plan) if picked up. PR #1 stays open until then. The three
+OPEN.md questions tagged `e01` remain its gating items.
+
 Compiled 2026-06-06 from PR #1. Tier-3 repo — senior-staff-engineer reviewed at
 compile; load-bearing findings applied (gate has no shared home, gate points at
 the acting skills not planning, push-safety belongs with the gate, s01→s02

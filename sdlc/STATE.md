@@ -7,42 +7,39 @@ updated: 2026-07-09
 
 ## Active focus
 
-`e01-sdlc-autonomy-additions` — absorbing Jiri's PR #1 ideas (autonomy gate,
-auto-progress loop, tiered hygiene, publication handling). Compiled and reviewed;
-not yet planned. The only active epic — `e03` shipped in **v2.2.0**.
+Nothing active — the queue is clear. `e02` (lifecycle hygiene) shipped v2.1.0 and
+`e03` (governance-gate granularity) shipped v2.2.0. `e01` (autonomy additions) is
+parked in the backlog. Operator's call what comes next.
 
 ## In flight
 
-- **e01** epic is `active` with a four-story roadmap (s01 gate, s02 auto-progress,
-  s03 tier-3 hygiene, s04 publication/README). No story planned yet.
-- **e03-governance-granularity** is **done** — shipped v2.2.0 and moved to
-  `/work/done/`. Made the story-close gate granular: `/security-review` runs only
-  on stories touching externally-deployed code (per-repo footprint map), and a
-  repo's declared scanners run under the same scoping (secret always;
-  dependency/code footprint-scoped). s03 (invariant enforcement) was descoped —
-  `public-deploy` is subsumed by the footprint map; `version-pairing` stays parked.
+- Nothing in `/work/active/`.
+- **Backlog:** `e01-sdlc-autonomy-additions` — shaped and reviewed but never planned
+  (Jiri's PR #1 ideas: shared act-or-check-in gate, continuous execution, tier-3
+  hygiene, publication handling). Promote to active via ri-plan if picked up; three
+  OPEN.md questions gate it.
 
 ## Immediate next
 
-- Plan **e01 s01** (the autonomy gate) — but resolve the three OPEN.md questions
-  first, especially where shared gate behaviour lives.
+- Operator's call. If reviving e01, resolve its three OPEN.md questions first
+  (chiefly where the shared act-or-check-in gate lives). Otherwise the shipped
+  system is stable at v2.2.0.
 
 ## Blockers
 
-- None hard. Three deferred calls in OPEN.md gate clean planning of e01 s01/s03/s04.
+- None.
 
 ## Open
 
-- 3 items in OPEN.md (all e01, module-area tagged).
+- 3 items in OPEN.md — all gate the backlogged `e01`; module-area tagged.
 
 ## Notes
 
-- This repo dogfoods its own SDLC: tier-3 config at `.ri/config.md`,
-  `/sdlc/work/` and `/sdlc/docs/` live. `raw/` is empty.
+- This repo dogfoods its own SDLC: tier-3 config at `.ri/config.md`, `/sdlc/work/`
+  and `/sdlc/docs/` live. `raw/` is empty; `/work/active/` is empty.
 - Releases: v2.0.0 (SDLC v2), v2.1.0 (lifecycle hygiene + cd-guard hook),
-  v2.2.0 (governance-gate granularity: footprint-scoped security + scanners,
-  plus the merge-vs-PR landing convention). ri-skills lands release-based:
-  tier-3 review rigour, merge + tag rather than per-story PRs.
-- `version-pairing` / `public-deploy` enforcement is parked (public-deploy is the
+  v2.2.0 (governance-gate granularity + merge-vs-PR landing convention). ri-skills
+  lands release-based: tier-3 review rigour, merge + tag rather than per-story PRs.
+- `version-pairing` / `public-deploy` enforcement parked (public-deploy is the
   coarse form of footprint; a repo with a footprint map doesn't need it).
-- PR #1 (jiludvik2) stays open until e01's stories land, then gets credit + close.
+- PR #1 (jiludvik2) stays open while e01 is backlogged; credit + close if it lands.
