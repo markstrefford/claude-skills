@@ -32,8 +32,9 @@ fake one would misrepresent the work. This is a hard rule, not a taste choice.
   left-aligned display title.
 - **Authors** - one centred line, names separated by a wide gap
   (`span.gap { display:inline-block; width:2.2em }`), affiliation on its own
-  smaller muted line beneath, any per-author note (e.g. "Orion is a Reimagined
-  Industries research agent.") as a small italic line under that.
+  smaller muted line beneath, then a contact email in small monospace under
+  that (e.g. `research@reimagined.industries`). The email, not a caveat: the
+  operator prefers no per-author explanatory notes on the first page.
 - **Date** - centred, its own line, a little below the affiliation.
 - **Abstract** - no panel, no background, no border. A centred bold "Abstract"
   heading in the text face (not the mono eyebrow style), over a justified
