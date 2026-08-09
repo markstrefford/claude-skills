@@ -129,6 +129,12 @@ Nothing is committed outside this repo without operator approval per repo.
 ## Roadmap
 
 - s01 — stop the skills and agents bundle being a copy, so an edit lands once
+  - t01 — settle which install mechanism actually works here, and record why
+  - t02 — back up and reconcile what is installed, before anything moves
+  - t03 — stand up the new install alongside the old, proven working
+  - t04 — remove the old install
+  - t05 — cut over the navigation hook and its registration
+  - t06 — document the install, and an uninstall that leaves nothing behind
 - s02 — state the shared vocabulary once, with a declared way for a repo to extend it
 - s03 — ids restart within their parent and sort correctly
 - s04 — placement becomes the single statement of state, without breaking what read the old one
