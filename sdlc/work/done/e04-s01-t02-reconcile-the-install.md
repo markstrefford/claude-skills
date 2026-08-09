@@ -3,7 +3,7 @@ id: e04-s01-t02-reconcile-the-install
 kind: task
 project: claude-skills
 parent: e04-s01-install-without-copy
-status: active
+status: done
 autonomy: attended
 created: 2026-08-09
 updated: 2026-08-09
@@ -94,6 +94,31 @@ Output is the backup, a written reconciliation record, and where needed
 commits bringing content into the repo. No removals, and no changes to what
 is installed.
 
+## Reconciliation record — 2026-08-09
+
+**Backup:** `~/claude-install-backup-20260809` — the three installed
+folders plus the hooks block of the settings file. 22 files, 276K. Verified
+faithful by comparing the backup against the live install: all three
+folders and the settings block identical. Restore is a single copy command,
+recorded in the backup's parent directory listing and in the commit for
+this task.
+
+**Reconciliation:** the install was iterated, not the repo. 21 installed
+items, every one bucketed.
+
+| Bucket | Count | Detail |
+| --- | --- | --- |
+| Identical to repo | 17 | 8 workflow skills, 6 research skills, 2 repo agents, 1 hook |
+| Differs from repo | 0 | — |
+| Only in install, from this repo | 0 | — |
+| Only in install, external | 4 | `code-quality-reviewer`, `performance-auditor`, `software-architect`, `test-guardian` |
+
+Nothing needed bringing into the repo. The four external agents are backed
+up and recorded; they are not adopted, and the cutover must leave them in
+place.
+
+Nothing under the read-from folders was changed by this task.
+
 ## Status
 
-active
+done — backup taken and verified, reconciliation clean
