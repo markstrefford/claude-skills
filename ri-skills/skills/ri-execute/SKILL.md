@@ -135,9 +135,16 @@ Whether the chain finished cleanly or stopped early:
 
 3. **If the chain just completed the last active task of a story, run the governance gate** (see below) before anything else. A story whose tasks are all in `/sdlc/work/done/` is a merge candidate, and the gate decides whether it's merge-ready.
 
-4. If any architectural decisions, runbook updates, or strategy shifts were touched, hand off to `ri-file`.
+4. **If that story close was the last one an epic was waiting on, close the epic.** The condition: no story or task naming that epic — directly, or through a story — remains in `/sdlc/work/active/` or `/sdlc/work/backlog/`. Epic close is two steps:
 
-5. Summarise to the operator: tasks completed, tasks pending review, tasks stopped, where the verifier flagged things, and the governance gate verdict if it ran.
+   - Set the epic artefact's `status: done` and move it to `/sdlc/work/done/` (same `git mv` fallback as a task move: plain `mv` plus `git add -A` if it isn't tracked).
+   - Hand off to `ri-archive`, scoped to that epic, to consolidate it with the stories and tasks already sitting in `done/`. That skill owns what the record contains and does its own operator approval on the grouping — don't pre-empt it or reimplement it here.
+
+   Report the close in the summary. An epic closing is worth the operator knowing about, and the archive step will ask them something.
+
+5. If any architectural decisions, runbook updates, or strategy shifts were touched, hand off to `ri-file`.
+
+6. Summarise to the operator: tasks completed, tasks pending review, tasks stopped, where the verifier flagged things, and the governance gate verdict if it ran.
 
 Keep the summary short. The operator can read the diffs and STATE.md for detail.
 
