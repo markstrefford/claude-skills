@@ -1,42 +1,50 @@
 ---
 project: claude-skills
-updated: 2026-07-09
+updated: 2026-08-09
 ---
 
 # STATE — claude-skills
 
 ## Active focus
 
-Nothing active, backlog empty, OPEN clear — the queue is fully drained at v2.2.0.
-`e02` (lifecycle hygiene) shipped v2.1.0, `e03` (governance-gate granularity) shipped
-v2.2.0, and `e01` (v1-based autonomy additions) is parked as done, superseded.
-Operator's call what comes next.
+`e04` (SDLC contract consolidation) compiled and active. The workflow's
+vocabulary lives in three places that disagree — the per-repo `SDLC.md`, the
+skills, and the work trees — and nothing detects the difference. Six stories:
+fix distribution first, then single-source the contract, then correct the
+skills that emit vocabulary, then leave a drift check behind.
 
 ## In flight
 
-- Nothing in `/work/active/` or `/work/backlog/`.
+- `e04-sdlc-contract-consolidation` — epic compiled, no stories broken out yet.
 
 ## Immediate next
 
-- Operator's call. The shipped system is stable at v2.2.0 with a clear queue.
+- Answer the three questions in OPEN.md, or plan `s01` (stop the skills and
+  agents bundle being a copy). `s01` gates the rest — until an edit to a skill
+  lands where it is stored, any correction made in this epic can be silently
+  overwritten by the next install.
 
 ## Blockers
 
-- None.
+- None. The OPEN questions shape `s01`/`s02` and `s05` but don't block planning.
 
 ## Open
 
-- 0 items in OPEN.md.
+- 3 items in OPEN.md.
 
 ## Notes
 
 - This repo dogfoods its own SDLC: tier-3 config at `.ri/config.md`, `/sdlc/work/`
-  and `/sdlc/docs/` live. `raw/`, `/work/active/`, `/work/backlog/` all empty.
+  and `/sdlc/docs/` live.
+- `/sdlc/raw/` is gitignored, so draining it deletes unrecoverably. Both raw
+  captures (`t31-sdlc-vocabulary-alignment`, `fix-the-install-no-copy`) are
+  retained rather than drained; the epic references them as sources.
 - Releases: v2.0.0 (SDLC v2), v2.1.0 (lifecycle hygiene + cd-guard hook),
   v2.2.0 (governance-gate granularity + merge-vs-PR landing convention). ri-skills
   lands release-based: tier-3 review rigour, merge + tag rather than per-story PRs.
-- `e01` parked as done (superseded by v2.x); its ideas largely exist by other routes.
-  **PR #1 (jiludvik2) can now be closed with thanks** — it will never be built as
-  written (v1-based).
+- `e01` parked as done (superseded by v2.x). **PR #1 (jiludvik2) can now be closed
+  with thanks** — it will never be built as written (v1-based).
 - `version-pairing` / `public-deploy` enforcement parked (public-deploy is the coarse
   form of footprint).
+- `e04` touches other repos at `s05`. Nothing is committed outside this repo
+  without operator approval per repo.
