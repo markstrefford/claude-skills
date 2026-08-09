@@ -3,7 +3,7 @@ id: e04-s01-t01-settle-the-mechanism
 kind: task
 project: claude-skills
 parent: e04-s01-install-without-copy
-status: active
+status: done
 autonomy: attended
 created: 2026-08-09
 updated: 2026-08-09
@@ -108,4 +108,4 @@ and later stories need to know why the working tree is or is not live.
 
 ## Status
 
-active
+done — mechanism settled and recorded in install-by-symlink.md
