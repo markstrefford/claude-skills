@@ -189,7 +189,7 @@ The per-task verifier checks each task against its own spec. The governance gate
 
 The gate never merges and never marks the story `done` on its own — story-level state and the merge are the operator's call. Its job is to produce a verdict, block when the verdict is load-bearing, and route everything else to the right queue.
 
-When a story is merge-ready, say how it should land, by tier (see the README's "Landing work — merge vs PR by tier"): tier-1 → local merge; tier-2 → PR if a senior-staff review ran at plan, else merge; tier-3 → PR (the PR carries the governance-gate evidence), unless the repo is release-based, in which case it merges and rolls into the next semver release. In release-based mode the PR is gone, so record the governance-gate verdict (clean, or the findings) in the story's close/merge commit — that keeps the evidence durable in git history. Name the expected landing path in the summary; the operator still makes the call.
+When a story is merge-ready it lands by merge, not by pull request — at every tier (see the README's "Landing work — branch, then merge"). The in-session reviews already covered what a PR would have, so what the PR was carrying is the audit trail: record the governance-gate verdict (clean, or the findings) in the story's close/merge commit, so the evidence stays durable in git history. On a release-based repo it then rolls into the next semver release and its notes. Name the expected landing path in the summary; the operator still makes the call, and still asks for a PR on the rare change they want parked for eyes first.
 
 ## Hard rules
 
