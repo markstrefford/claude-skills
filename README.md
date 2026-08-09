@@ -38,6 +38,7 @@ Five principles drove the design:
 | `ri-execute` | Runs task chains. Tests first, implementation, verifier, commit, move to done. Handles autonomy levels (attended, review, auto) and multi-stack repos. At story close on a `security-gate: required` repo, runs the governance gate (`/security-review` + `/code-review`) over the story branch. |
 | `ri-file` | Files session outputs back to `/sdlc/docs/` when work produced decisions, runbook updates, strategy shifts, or architecture facts. Refuses filler. |
 | `ri-state` | Regenerates `/sdlc/STATE.md` from filesystem truth. Reads `/sdlc/OPEN.md` for the open question count. |
+| `ri-archive` | Collapses `/sdlc/work/done/` into one record per closed epic, carrying the stories, the decisions that steered them, and the commits — then removes the files it replaced. Fired at epic close by `ri-execute`, or on demand when the done tree has outgrown itself. |
 | `ri-do` | Tier-1 lite path. No artefact, no verifier, just execute and commit. Refuses tier-3 work without explicit override. |
 
 ### Sub-agents (`~/.claude/agents/`)
