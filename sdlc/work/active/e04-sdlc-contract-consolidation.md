@@ -9,15 +9,15 @@ created: 2026-08-09
 updated: 2026-08-09
 ---
 
-# Epic — SDLC contract consolidation
+# Epic — Retire SDLC.md and single-source the vocabulary
 
 ## Executive summary
 
 The workflow describes itself in three places that disagree. The per-repo
 `SDLC.md` says one thing, the skills do another, and the work trees contain
-a third. Measured across the three repos under active development — around
-900 artefacts — there are fifty frontmatter fields, fourteen artefact kinds
-and eighteen status values in use, against ten, seven and three that are
+a third. Measured across the repos under active development — around 900
+artefacts — there are fifty frontmatter fields, fourteen artefact kinds and
+eighteen status values in use, against ten, seven and three that are
 written down anywhere.
 
 Nothing detects the difference, so every session widens it. Two failures on
@@ -25,37 +25,39 @@ the day this was captured came straight out of it: an epic filed as
 finished while still holding live work, and five items sitting in the
 active queue that had never been started.
 
-This epic makes the contract single-sourced, gives it a distribution
-mechanism that doesn't rot, and leaves behind a check that keeps it true.
-The shared vocabulary moves out of the seven diverging per-repo copies; the
-skills are corrected to emit only what the contract describes; the repos
-under active development are brought onto it; and the state refresh gains a
-conformance flag so the next divergence is reported rather than
-accumulated.
+`SDLC.md` goes away rather than moving. Seven copies exist, no two alike,
+sizes from five to twenty kilobytes, four of them months stale, three of
+them referenced by nothing at all. Everything in them already has a better
+home: the workflow belongs to the skills that run it, repo gates and
+invariants belong in the repo config, and standing rules belong in the
+repo's own instructions where they are already read. Only the shared
+vocabulary needs somewhere new, and it belongs with the skills that emit it.
 
-It does not change how the workflow behaves. The verbs, the tiers, the
-autonomy model and the gates all stay as they are. This is about the
-workflow being able to state what it is, and notice when it stops.
+What is left is a workflow that states itself once, skills that emit only
+what is stated, every repo agreeing, and a check that reports the next
+divergence instead of absorbing it. Behaviour doesn't change — same verbs,
+same tiers, same autonomy model, same gates.
 
 ## Outcome
 
-- One shared contract — glossary, directory layout, artefact contract,
-  vocabulary — held in a single place rather than copied per repo.
-- Repo-specific facts stay per-repo, in the config file that already exists
-  for most of them, including each repo's own subject-matter artefact kinds.
+- No `SDLC.md` in any repo. Its content lands in the three places that
+  already exist: the skills, the repo config, the repo's own instructions.
+- One statement of the shared vocabulary, held with the skills that emit it
+  rather than copied per repo.
+- Repo-specific facts — tier, gates, invariants, and each repo's own
+  subject-matter artefact kinds — declared in the repo config, including
+  the three repos that currently have no config at all.
 - A skills and agents bundle that is edited where it is stored, so a change
   lands once and is visible in history, and installs cleanly for someone
   else cloning the repo.
-- Every artefact kind and state value in use either described by the
-  contract or declared by the repo as its own.
+- Every artefact kind and state value in use either described by the shared
+  vocabulary or declared by the repo as its own.
 - Ids that restart within their parent and sort correctly, so a story with
   four pieces of work reads as four rather than thirty-five.
 - One statement of whether work is queued, running or finished, rather than
   two that can disagree.
-- The repos under active development agreeing with the contract, and their
-  own copies reduced to what is genuinely local to them.
-- A standing check that reports vocabulary drift, so this epic is a fix
-  rather than a snapshot.
+- A standing check that reports vocabulary drift, so this is a fix rather
+  than a snapshot.
 
 ## Out of scope / carry-forward
 
@@ -65,16 +67,17 @@ worth a migration, and the archive verb collapses most of them anyway. The
 accepted cost: old and new id formats coexist and sort badly against each
 other until the old ones age out.
 
-**The three dormant repos** — voss_crm, Content-Pipeline, constellation-core.
-Carry-forward, not scope. Because the skills are global, they receive the
-behaviour change without the migration, so the skills must tolerate a work
-tree built under the old model rather than assume the new one. That
-tolerance is in scope; migrating those repos is not.
+**Nothing carried forward on repo coverage.** All seven repos are in scope.
+The skills install once and apply everywhere, so leaving any repo behind
+means its next session runs new skills against a tree built under the old
+model. Three of them — signalstrata, constellation-core, voss_crm — have no
+config file and run at the highest rigor by default; that is the right tier
+for each, so the work is recording it rather than changing it.
 
 **Normalising the stray state values.** Around a dozen artefacts use words
-that are synonyms of values the contract will define. Worth correcting, but
-after the contract exists to correct them against. Dated follow-up rather
-than silent carry.
+that are synonyms of values the vocabulary will define. Worth correcting,
+but after there is something to correct them against. Dated follow-up
+rather than silent carry.
 
 **Replacing the stable-id rule.** The source note proposed replacing an
 existing rule about moved artefacts leaving a marker file behind. That rule
@@ -90,64 +93,64 @@ The skills are global and every Reimagined Industries repo runs them, so
 the blast radius is every project, not this one. That is why this repo is
 governed at the highest rigor.
 
-Three things carry real risk.
-
-**The state change reaches repos the migration doesn't.** The skills
-install once and apply everywhere; only the actively-developed repos get
-brought onto the contract. Every other repo's next session runs new skills
-against an old tree. The skills have to degrade gracefully there, and that
-is a requirement on the story, not a sequencing problem.
+**Retirement is not deletion.** Each repo's copy carries a handful of lines
+that are genuinely local — a version-pairing invariant here, a
+no-pull-requests convention there — mixed in with workflow description that
+the skills already own. Separating the two is the work of the story, and
+getting it wrong loses a rule the operator relies on. The two copies at the
+current version are nearly identical and easy; the older ones carry
+sections that both duplicate and contradict what the skills now do, and
+deciding what survives is a judgment call per repo, not a merge.
 
 **Removing the state field breaks a precondition elsewhere.** The archive
-verb currently refuses to act unless an epic's file says it is finished. If
-the state field goes away without that verb changing in the same breath,
-epic close hands off to something that can never proceed — and it fails at
-the end of the next epic to close, anywhere, in a chain the operator has
-already approved.
+verb refuses to act unless an epic's file says it is finished. If the state
+field goes away without that verb changing in the same breath, epic close
+hands off to something that can never proceed — and it fails at the end of
+the next epic to close, anywhere, in a chain the operator has already
+approved.
 
 **Removing the state field also removes a signal that was doing work.** The
-state refresh currently picks out what is in flight by reading that field.
-Placement alone cannot distinguish work that is running from work that is
-merely sitting in the active folder — which is precisely the second of the
-two failures that motivated this epic. Whatever replaces that derivation
-has to be settled inside the story, not assumed.
+state refresh reads it to pick out what is in flight. Placement alone
+cannot distinguish work that is running from work that is merely sitting in
+the active folder — which is precisely the second of the two failures that
+motivated this epic. Whatever replaces that derivation has to be settled
+inside the story, not assumed.
 
 Nothing is committed outside this repo without operator approval per repo.
 
 ## Roadmap
 
 - s01 — stop the skills and agents bundle being a copy, so an edit lands once
-- s02 — settle the shared contract, correct every skill that emits vocabulary, and give repos a declared way to extend it
+- s02 — state the shared vocabulary once, with a declared way for a repo to extend it
 - s03 — ids restart within their parent and sort correctly
 - s04 — placement becomes the single statement of state, without breaking what read the old one
-- s05 — bring the repos under active development onto the contract
+- s05 — retire SDLC.md across all seven repos, rehoming what is genuinely local
 - s06 — the state refresh reports vocabulary drift
 
 ## Acceptance
 
-1. A census of the live work trees returns no artefact kind or state value
-   that the contract doesn't describe or the repo doesn't declare as its
+1. No repo contains an `SDLC.md`, and nothing references one.
+2. Every rule that was local to a repo survives retirement, in that repo's
+   config or its own instructions.
+3. A census of the live work trees returns no artefact kind or state value
+   that the vocabulary doesn't describe or the repo doesn't declare as its
    own — other than the dozen known strays, which carry a dated follow-up.
-2. No skill emits a field or value the contract doesn't describe.
-3. The shared contract exists in exactly one place. Where a per-repo file
-   survives, it holds only what is genuinely local to that repo and points
-   at the shared contract for the rest.
-4. A newly planned story numbers its first piece of work as the first, the
+4. No skill emits a field or value the vocabulary doesn't describe.
+5. A newly planned story numbers its first piece of work as the first, the
    numbers sort in the order they were created, and the skill's own worked
    example shows that restart.
-5. An edit to a skill or an agent is visible in this repo's history without
+6. An edit to a skill or an agent is visible in this repo's history without
    a manual copy step, and the documented install works for someone who
    only has the repo.
-6. A repo that has not been migrated still refreshes its cursor and runs
-   its work queue without error.
-7. The state refresh names any artefact carrying vocabulary the contract
-   doesn't describe.
+7. Every repo has a config file declaring its tier.
+8. The state refresh names any artefact carrying vocabulary the shared
+   statement doesn't describe.
 
 ## Status
 
 Compiled 2026-08-09 from two raw captures, grounded in a census of the live
-repos and revised after senior review. Stories are one-liners in the
+repos, revised after senior review and again on the operator's call to
+retire `SDLC.md` rather than relocate it. Stories are one-liners in the
 roadmap; each gets planned against the actual skills before any work
-starts. Sequence matters — the distribution fix first, then the contract,
-then the skills that read it. Two questions are parked in the judgment
-queue rather than settled here.
+starts. Sequence matters — the distribution fix first, then the vocabulary,
+then the skills that emit it, then the retirement.
