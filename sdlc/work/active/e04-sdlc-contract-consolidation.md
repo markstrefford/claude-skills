@@ -93,14 +93,22 @@ The skills are global and every Reimagined Industries repo runs them, so
 the blast radius is every project, not this one. That is why this repo is
 governed at the highest rigor.
 
-**Retirement is not deletion.** Each repo's copy carries a handful of lines
-that are genuinely local — a version-pairing invariant here, a
-no-pull-requests convention there — mixed in with workflow description that
-the skills already own. Separating the two is the work of the story, and
-getting it wrong loses a rule the operator relies on. The two copies at the
-current version are nearly identical and easy; the older ones carry
-sections that both duplicate and contradict what the skills now do, and
-deciding what survives is a judgment call per repo, not a merge.
+**Retirement is not deletion, and local is not the only destination.** Each
+repo's copy mixes three things: workflow the skills already own, invariants
+genuinely local to that repo, and rules that read as local but are actually
+standing policy everywhere. Each needs a different home, and a rule sorted
+into the wrong one is either lost or wrongly confined to one repo. The two
+copies at the current version are near-identical and easy; the older ones
+carry sections that both duplicate and contradict what the skills now do,
+and deciding what survives is a judgment call per repo, not a merge.
+
+**The no-pull-requests rule is the live instance of that.** It is recorded
+in one repo as though local; it is standing policy for all of them. The
+skills still route story close to a pull request by tier, so in six repos
+the workflow is currently instructing the operator to do something the
+operator has ruled out. This is drift being actively served, not just
+recorded, and it should be corrected ahead of the retirement rather than
+inside it.
 
 **Removing the state field breaks a precondition elsewhere.** The archive
 verb refuses to act unless an epic's file says it is finished. If the state
@@ -124,26 +132,28 @@ Nothing is committed outside this repo without operator approval per repo.
 - s02 — state the shared vocabulary once, with a declared way for a repo to extend it
 - s03 — ids restart within their parent and sort correctly
 - s04 — placement becomes the single statement of state, without breaking what read the old one
-- s05 — retire SDLC.md across all seven repos, rehoming what is genuinely local
+- s05 — retire SDLC.md across all seven repos, sorting each rule to the skills, the repo config, or the repo's own instructions
 - s06 — the state refresh reports vocabulary drift
 
 ## Acceptance
 
 1. No repo contains an `SDLC.md`, and nothing references one.
-2. Every rule that was local to a repo survives retirement, in that repo's
-   config or its own instructions.
-3. A census of the live work trees returns no artefact kind or state value
+2. Every rule in a retired copy survives, in the right one of three homes:
+   the skills where it is standing policy, the repo config where it is a
+   gate or tier, the repo's own instructions where it is genuinely local.
+3. Story close never routes to a pull request, in any repo, at any tier.
+4. A census of the live work trees returns no artefact kind or state value
    that the vocabulary doesn't describe or the repo doesn't declare as its
    own — other than the dozen known strays, which carry a dated follow-up.
-4. No skill emits a field or value the vocabulary doesn't describe.
-5. A newly planned story numbers its first piece of work as the first, the
+5. No skill emits a field or value the vocabulary doesn't describe.
+6. A newly planned story numbers its first piece of work as the first, the
    numbers sort in the order they were created, and the skill's own worked
    example shows that restart.
-6. An edit to a skill or an agent is visible in this repo's history without
+7. An edit to a skill or an agent is visible in this repo's history without
    a manual copy step, and the documented install works for someone who
    only has the repo.
-7. Every repo has a config file declaring its tier.
-8. The state refresh names any artefact carrying vocabulary the shared
+8. Every repo has a config file declaring its tier.
+9. The state refresh names any artefact carrying vocabulary the shared
    statement doesn't describe.
 
 ## Status
