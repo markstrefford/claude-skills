@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.4.0 — 2026-10-26
+
+- New `security-reviewer` agent, on Sonnet. In plan mode it names the threats a sensitive story's plan must answer, and they become tasks and test cases. In checklist mode it reviews a change against the OWASP Top 10:2025, API Security Top 10 (2023) and LLM Top 10 (2025), reporting every category.
+- Security is checked at plan time for sensitive stories, per task by the verifier, at story close, and at epic close across the epic's combined change. The epic review is always the checklist and never blocks.
+- `security-gate` takes `required`, `advisory` or `off`, defaulting by tier: tier 3 required, tier 2 advisory, tier 1 off. **Behaviour change:** without the key, tier-3 repos, and repos with no config (which run as tier 3), now get a blocking gate where they had none, and tier-2 repos get advisory reviews.
+- New `security-review: owasp | full`. `owasp` runs the checklist; `full` adds `/security-review` at story close. The default is `full` at tier 3 and `owasp` otherwise.
+- `docs/governance.md` states the limits of the security reviews: what they don't see, where they depend on judgment, and what covers each gap.
+- The verifier checks for security smells. One with a plausible path from outside input fails the task.
+
 ## 2.3.0 — 2026-10-26
 
 ### Skills

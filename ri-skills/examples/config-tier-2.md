@@ -3,6 +3,8 @@ project: example-analytics-platform
 default-rigor: tier-2
 branch-default: story-level
 landing: merge          # or pull-request for a team repo
+security-gate: advisory # the tier-2 default: reviews run, findings go to OPEN.md, nothing blocks
+security-review: owasp  # or full for /security-review on top of the OWASP checklist
 
 stacks:
   api:
@@ -25,6 +27,8 @@ How the skills behave at tier-2:
 - Verifier mandatory on tier-2 tasks (post-execute review)
 - Senior-staff-engineer runs on operator request (default off, to keep token
   spend down on the planning step)
+- Security: OWASP checklist review of the plan for sensitive stories, and of
+  the diff at story and epic close; advisory, so findings queue in OPEN.md
 - Branching: story-level by default (multiple tasks share one branch and
   land as a unit when the story closes)
 

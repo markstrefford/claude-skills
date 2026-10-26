@@ -1,6 +1,6 @@
 ---
 name: ri-execute
-description: Run one or more planned tasks from /sdlc/work/active/ through tests, implementation, verification and commit, chaining across tasks without re-asking, and mark tasks, stories and epics done as each completes, in a repo that uses the ri SDLC. Runs the story-close governance gate on repos with `security-gate: required`. Use when the operator wants planned work done or marked done — "do e02-s06-t1 and t2", "execute that story", "mark e04-s01 done", /ri-execute.
+description: Run one or more planned tasks from /sdlc/work/active/ through tests, implementation, verification and commit, chaining across tasks without re-asking, and mark tasks, stories and epics done as each completes, in a repo that uses the ri SDLC. Runs the story-close governance gate and an epic-close security review unless `security-gate` is off. Use when the operator wants planned work done or marked done — "do e02-s06-t1 and t2", "execute that story", "mark e04-s01 done", /ri-execute.
 model: opus
 effort: high
 ---
@@ -13,7 +13,7 @@ Work that still needs planning, designing or shaping goes to `ri-plan` or `ri-co
 
 ## Config
 
-Read `.ri/config.md` for `default-rigor` (tier), the test command (`test-command`, or per stack under `stacks:`), `branch-default` (usually `story-level`), `landing` (`merge` if absent), and `security-gate`, `footprint:` and `scanners:` for the story-close gate. If the config is missing, work at tier 3 and tell the operator — never assume a repo is low-risk.
+Read `.ri/config.md` for `default-rigor` (tier), the test command (`test-command`, or per stack under `stacks:`), `branch-default` (usually `story-level`), `landing` (`merge` if absent), and `security-gate`, `security-review`, `footprint:` and `scanners:` for the gate. If the config is missing, work at tier 3 and tell the operator — never assume a repo is low-risk.
 
 ## Working across a long chain
 
@@ -91,13 +91,13 @@ Nothing else does.
 
 Run as soon as a story's last active task is done.
 
-1. **Gate.** Run the governance gate below when the repo requires it. A blocked gate stops the chain and the story stays active.
+1. **Gate.** Run the governance gate below unless `security-gate` is off. Under `required`, a blocking finding stops the chain and the story stays active. Under `advisory`, every finding goes to `OPEN.md` and the close continues.
 2. **Mark the story done** (see "Marking work done"). The `<story-id>: done` commit carries the gate verdict in its message, plus any `OPEN.md` appends not yet committed, including the gate's advisory findings.
-3. **Epic close.** If the epic is now done (see the table below), move its doc drafts and mark it done in one `<epic-id>: done` commit, then hand off to `ri-archive` scoped to that epic. Archive owns the record and its own approval; don't reimplement it here. If the operator declines the archive, the epic stays done and unarchived.
+3. **Epic close.** If the epic is now done (see the table below), run the epic security review below, then move its doc drafts and mark it done in one `<epic-id>: done` commit, then hand off to `ri-archive` scoped to that epic. Archive owns the record and its own approval; don't reimplement it here. If the operator declines the archive, the epic stays done and unarchived.
 4. **Filing.** If the work touched an architectural decision, runbook or strategy, hand off to `ri-file`.
 5. **Land** the story (see "Landing a story"). It comes last so the archive record and filed docs travel with the story.
 
-Under `autonomy: auto` nobody is there to approve an archive grouping or filed content, so steps 3 and 4 don't hand off. Mark the epic done if it is, append one `OPEN.md` line for each ("e05 is done and ready to archive", "e05-s02 produced a decision worth filing") in that commit or the story's, and land. The operator runs archive and file later, from `main`.
+Under `autonomy: auto` nobody is there to approve an archive grouping or filed content, so steps 3 and 4 don't hand off. If the epic is done, run the epic security review and mark it done; append one `OPEN.md` line for each ("e05 is done and ready to archive", "e05-s02 produced a decision worth filing") in that commit or the story's, and land. The operator runs archive and file later, from `main`.
 
 ## When the chain ends
 
@@ -121,12 +121,12 @@ A level is done when the level below it is done and its own check has passed. Ma
 | Level | Done when | Who triggers it |
 | --- | --- | --- |
 | Task | The verifier passes, with or without notes (tier 2 and 3), under `attended` or `auto`. At tier 1 without a verifier: implemented, suite passing, committed. A `review` task becomes done when the operator approves it after the pause; the chain then resumes from the next task. | This skill, per task |
-| Story | Every task naming it as `parent:` is in done, and the governance gate is clean or not required. A blocked gate leaves the story active. | This skill, at story close |
+| Story | Every task naming it as `parent:` is in done, and the governance gate is clean, advisory, or off. A gate that blocks under `required` leaves the story active. | This skill, at story close |
 | Epic | Every story in its roadmap is in done, and no story or task under it remains in active or backlog. A roadmap line with no story file yet is a story still to do. Check `main` as well as the current branch: an earlier story may have landed after this branch was cut, so a story in done on either counts, even if this branch still shows it active. | This skill, at the story close that completes it |
 
 At epic close, before handing off to `ri-archive`, move any decision, runbook, strategy or architecture drafts co-located with the epic in `/sdlc/work/active/` to their `/sdlc/docs/` folders, in the `<epic-id>: done` commit. They are the epic's lasting output and must not be swept into the archive record.
 
-The operator can also ask to mark something done directly ("mark e04-s01 done"), for work finished outside a chain. Apply the same conditions: confirm the children are done and, for a story on a `security-gate: required` repo, run the gate first. If a condition isn't met, say which, and don't mark it. If it is met, commit on the story's branch if one exists. An epic, or a story with no branch, commits on `main` under `merge`, or on a short `sdlc/<id>` branch opened as a pull request under `pull-request`. Then continue as in "Closing a story" from step 3.
+The operator can also ask to mark something done directly ("mark e04-s01 done"), for work finished outside a chain. Apply the same conditions: confirm the children are done and, for a story, run the gate first unless `security-gate` is off. If a condition isn't met, say which, and don't mark it. If it is met, commit on the story's branch if one exists. An epic, or a story with no branch, commits on `main` under `merge`, or on a short `sdlc/<id>` branch opened as a pull request under `pull-request`. Then continue as in "Closing a story" from step 3.
 
 ## Landing a story
 
@@ -145,12 +145,21 @@ With `branch-default: main` there is nothing to land: the commits are already on
 
 The verifier checks each task against its own spec. The gate reviews the whole story as one change, at the moment it becomes a merge candidate, to catch security and cross-task problems no single task's verifier can see.
 
-**When it fires.** The chain moves a story's last active task to done, and `.ri/config.md` has `security-gate: required`. Once per story close, over the story's full diff: the story branch against `main`, or, with `branch-default: main`, from the commit before the story's first task. No flag, no gate. Tier-3 repos normally set the flag.
+**When it fires.** The chain moves a story's last active task to done. Once per story close, over the story's full diff: the story branch against `main`, or, with `branch-default: main`, from the commit before the story's first task.
+
+**Settings.** Both default by the story's resolved tier (its `tier:`, else the repo's) when absent.
+
+| Key | Values | Default | Effect |
+| --- | --- | --- | --- |
+| `security-gate` | `required`, `advisory`, `off` | tier 3 `required`, tier 2 `advisory`, tier 1 `off` | `required`: blocking findings stop the story. `advisory`: everything runs, nothing blocks, findings go to `OPEN.md`. `off`: no gate, and no epic security review |
+| `security-review` | `owasp`, `full` | tier 3 `full`, otherwise `owasp` | How deep the security review goes. See below |
 
 **What it runs.** These are independent; run them in parallel.
 
 - `/code-review high` (`/code-review xhigh` at tier 3) over the story branch diff. Always runs. Pass the level explicitly: without one, the command reuses whatever level the operator last typed, and the gate's depth would vary by session.
-- `/security-review` — only when the diff touches deployed code (see footprint). It compares against `origin`'s default branch; if there is no `origin`, or local `main` is ahead of it, say in the verdict that the review covered a different diff from the story's rather than reporting clean.
+- The security review, only when the diff touches deployed code (see footprint), at the configured depth:
+  - `owasp`: the `security-reviewer` sub-agent (`ri-skills:security-reviewer` under a plugin install) in `checklist` mode, briefed with the story id and the diff range. It reports every OWASP category that applies, so the result reads as an audit.
+  - `full`: the same checklist, plus `/security-review` for flaws a list has no category for. `/security-review` compares against `origin`'s default branch; if there is no `origin`, or local `main` is ahead of it, say in the verdict that it covered a different diff from the story's rather than reporting clean.
 - Declared scanners. Each `scanners:` entry has a `command` and a `class`: `secret` (e.g. gitleaks), `dependency` (e.g. pip-audit, npm audit) or `code` (e.g. bandit). Run the named command and read its output; never reimplement the scan. `secret` scanners always run when the gate fires; `dependency` and `code` scanners follow the footprint rule. Map each tool's native severity to block or advisory; the default block threshold is high/critical, overridable per scanner with `block-threshold:`. A scanner that can't run (not installed, or a non-zero exit that isn't findings) blocks, never passes green.
 
 **Footprint.** An optional `footprint:` map lists `internal:` and `deployed:` path globs. When present, classify the story's changed paths and run the security review only if any is deployed. The rules all lean toward running the review:
@@ -171,6 +180,15 @@ The verifier checks each task against its own spec. The gate reviews the whole s
 | Dependency or code finding at or above the threshold | Blocks. |
 | A declared scanner that couldn't run | Blocks. |
 | Low-severity correctness, cleanup, or scanner finding below threshold | Advisory: append to `OPEN.md` tagged with the story id, and continue. |
+| Anything, under `security-gate: advisory` | Advisory, as above. A finding that would have blocked is marked so in its `OPEN.md` line. |
 | Clean | Merge-ready. Say so plainly. |
 
-The gate produces a verdict; a clean verdict is what lets the story be marked done and landed. Record the verdict (clean, or the findings) where "Landing a story" says.
+The gate produces a verdict; a clean verdict, or any verdict under `advisory`, is what lets the story be marked done and landed. Record the verdict (clean, or the findings) where "Landing a story" says.
+
+## Epic close: the security review
+
+Each story's gate sees one story. Some flaws only exist across stories: a check one story added and a later one bypassed, or data an early story stored that a later one exposes. So when an epic closes, and `security-gate` isn't off, review the epic's change as a whole.
+
+- **Scope.** The epic's commits, wherever they are: earlier stories may have landed on `main` after this branch was cut, so search both `main` and the current branch. Under `pull-request`, fetch first and search `origin/main`. Unrelated work merged in between stays out because only the epic's commits are read.
+- **Depth.** The `security-reviewer` in `checklist` mode, briefed with the epic id and the refs, whatever `security-review` is set to. `/security-review` isn't used here: it diffs against `origin`'s default branch, where the earlier stories already are, so it would see only the last story, which its own gate covered. Defaults follow the repo's tier, or the epic's `tier:` if it has one. The footprint rule applies to the paths the epic touched.
+- **Disposition.** It never blocks: the stories have already passed their gates, and some have landed. Findings go to `OPEN.md` tagged with the epic id, a critical or high one worded as a proposed story ("e05 needs a story: the export endpoint skips the tenant check added in s02"). They go in the `<epic-id>: done` commit, and the summary names them.

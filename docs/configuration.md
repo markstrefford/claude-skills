@@ -12,8 +12,9 @@ Each repo has a `.ri/config.md`: YAML frontmatter holding the settings, then fre
 | `landing` | `merge` \| `pull-request` | `merge` | all that commit | How work reaches `main`. See below |
 | `test-command` | string | none | execute, verifier | Test command for a single-stack repo |
 | `stacks` | map | none | plan, execute, verifier | Multi-stack repos: each stack has a `path` and a `test` command. A task's `stack:` picks which command runs |
-| `security-gate` | `required` | absent (off) | execute | Turns on the story-close gate |
-| `footprint` | map with `internal` and `deployed` glob lists | absent (everything deployed) | execute | Scopes the security review to stories that touch deployed code |
+| `security-gate` | `required` \| `advisory` \| `off` | tier 3 `required`, tier 2 `advisory`, tier 1 `off` | plan, execute | Whether the story-close gate and the plan and epic security reviews run, and whether a gate finding blocks. Defaults follow the story's resolved tier. See [governance](governance.md) |
+| `security-review` | `owasp` \| `full` | tier 3 `full`, otherwise `owasp` | execute | `owasp`: the OWASP checklist. `full`: the checklist plus `/security-review` at story close |
+| `footprint` | map with `internal` and `deployed` glob lists | absent (everything deployed) | execute | Scopes the security reviews to changes that touch deployed code |
 | `scanners` | list | none | execute | Commands the gate runs: each has `command`, `class` (`secret`, `dependency`, `code`) and an optional `block-threshold` |
 | `version-pairing` | string | none | — | Advisory. Documents files that must version together; not yet enforced |
 | `public-deploy` | boolean | none | — | Advisory. Not yet enforced |

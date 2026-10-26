@@ -13,7 +13,7 @@ Executing existing tasks is `ri-execute`; shaping a new story from raw is `ri-co
 
 ## Config
 
-Read `.ri/config.md` for `default-rigor` (tier), `stacks` (which code each task touches, and its test command), `branch-default` and `landing`. If it is missing, work at tier 3 and tell the operator.
+Read `.ri/config.md` for `default-rigor` (tier), `stacks` (which code each task touches, and its test command), `branch-default`, `landing` and `security-gate`. If it is missing, work at tier 3 and tell the operator.
 
 At tier 1, planning is usually overkill: do a thin pass (one or two tasks, minimal test specs) or, if it is really "go do this", redirect to `ri-do`. At tier 2, test specifications are required on load-bearing tasks. At tier 3, describe only shape grounded in code you read; if you couldn't read it, say so and stop.
 
@@ -81,9 +81,15 @@ Under this story's line, list the task lines in order, in the same operator gram
 
 At tier 3 always, at tier 2 on request, never at tier 1: have the `senior-staff-engineer` sub-agent (`ri-skills:senior-staff-engineer` under a plugin install) review the task sequence. Brief it with the story id and the task file paths, not your reasoning. Apply the findings that are clearly load-bearing before the operator sees the plan, and show them what you applied and what you didn't; whether a finding can wait is their call.
 
+### 6a. Security review
+
+When `security-gate` isn't off (absent, it defaults to off only when the story's resolved tier is 1) and the story touches a sensitive surface, have the `security-reviewer` sub-agent (`ri-skills:security-reviewer` under a plugin install) review the plan in `plan` mode, briefed with the story id and the task file paths. Sensitive means any of: authentication or authorisation, payments, personal or customer data, a new or changed public endpoint or interface, secrets or credentials, file upload or parsing of untrusted input, or a model fed input the system doesn't control. Judge from the story and the code read in step 2; when unsure, run it.
+
+Apply what it says the plan must add as tasks, acceptance criteria or test-spec cases, so the threats are tested rather than remembered. On NEEDS WORK, apply them and re-run the review once; anything still open goes to the operator at approval. Show the operator what you applied and what you didn't, as for the senior-staff review.
+
 ### 7. Operator approval
 
-Present: the story line, the task lines, any senior-staff findings you applied, questions raised while planning, and the prior context surfaced in step 2. The operator approves the shape and may edit task lines. The engineering detail underneath is yours; they trust the grounding. Commit nothing until they approve.
+Present: the story line, the task lines, any senior-staff and security findings you applied, questions raised while planning, and the prior context surfaced in step 2. The operator approves the shape and may edit task lines. The engineering detail underneath is yours; they trust the grounding. Commit nothing until they approve.
 
 ### 8. Commit, open questions, STATE
 
