@@ -1,6 +1,8 @@
+---
 project: example-platform
 default-rigor: tier-3
 branch-default: story-level
+landing: merge          # or pull-request for a team repo
 
 stacks:
   backend:
@@ -38,6 +40,7 @@ scanners:
     class: dependency
   - command: bandit -r backend
     class: code
+---
 
 # Tier-3 behaviour
 
@@ -54,7 +57,7 @@ How the skills behave at tier-3:
 - Compile stays conservative on thin output; if source material doesn't
   ground a detail, the artefact leaves a placeholder rather than
   confabulating
-- Branching: story-level by default; merge only, never rebase
+- Branching: story-level by default; merge commits only, never rebase
 - ri-do refuses tier-3 work by default; operator must explicitly override
   per-task if they want the lite path
 

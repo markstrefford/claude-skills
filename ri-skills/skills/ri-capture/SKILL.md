@@ -1,88 +1,27 @@
 ---
 name: ri-capture
-description: Drop unstructured material into /sdlc/raw/ verbatim, with no transformation. The "no rules" zone of the SDLC — anything captured here gets shaped later by ri-compile, but at capture time the only rule is don't lose the thought. Triggers on explicit slash command (/ri-capture), capture phrasing ("capture this", "drop into raw", "save for later", "add to the raw folder"), or when the operator pastes a block of thinking with no clear question attached. Use this skill whenever the operator wants something preserved without being processed. Don't ask which verb to use, run.
+description: Save material verbatim into /sdlc/raw/ for later shaping, in a repo that uses the ri SDLC (has /sdlc/ or .ri/config.md). Use when the operator wants a thought, paste, or conversation kept without being processed — "capture this", "drop it in raw", /ri-capture.
 model: haiku
-
+effort: low
 ---
 
 # ri-capture
 
-Writes material into `/sdlc/raw/` exactly as given. Doesn't shape it, doesn't summarise it, doesn't tag it. Compile happens later.
+Raw is the inbox: the one place in the SDLC with no rules, so that nothing is lost while the operator is thinking. Capture writes what it is given and nothing more. Shaping it is `ri-compile`'s job, later.
 
-## When to run this
+If the operator wants the material shaped now, that is `ri-compile`.
 
-The operator wants a thought preserved without being processed. Examples:
+## Flow
 
-- "Capture this conversation"
-- "Drop this into raw — I'll deal with it later"
-- "Save this for the next session"
-- "/ri-capture"
-- Operator pastes a long block, screenshot transcript, or thinking dump with no clear question
+1. **Get the content.** In order of preference: the block the operator gave in this message, a file they pointed at, or the recent conversation if they said "capture this conversation". If none of those is clear, ask once what to capture.
 
-If the operator is asking for the material to be shaped, that's `ri-compile`, not this. Capture is the inbox; compile is the sorting.
+2. **Name the file** `/sdlc/raw/<slug>.md`, with a 2–5 word hyphenated slug for the topic (`agent-os-roadmap.md`). No date prefix — dates live on compiled artefacts. Use the operator's name for it if they give one. If the slug is taken, add a qualifier (`-2`, `-followup`) rather than overwrite, because overwriting raw silently destroys a thought.
 
-## The capture flow
+3. **Write it verbatim.** No summary, restructuring, frontmatter or tags; keep typos, stream of consciousness, names and timestamps. Compile needs the original to ground its output, and a summary would be compile done badly at the wrong time. The one adjustment allowed is making machine-mangled input readable (terminal escape characters, broken line endings).
 
-### 1. Get the content
+4. **Report and check the count.** Say `Captured to /sdlc/raw/<file>.md.` Then count the files in `/sdlc/raw/`; if there are more than 20, add that raw has N items and is worth a compile pass. Past 20 the inbox becomes a junk drawer.
 
-Three sources, in order of preference:
+## Boundaries
 
-- An explicit block the operator provided in the current message
-- A file the operator referenced ("capture what's in the clipboard at `/tmp/notes.md`")
-- The recent conversation context, if the operator says "capture this conversation"
-
-If none of those are clear, ask once: "What do you want captured?" Then proceed when answered.
-
-### 2. Choose a filename
-
-Format: `<slug>.md` in `/sdlc/raw/`.
-
-The slug should be derived from the content's topic in 2-5 hyphenated words. Examples:
-
-- `moltbot-engagement-thoughts.md`
-- `constellation-pricing-musings.md`
-- `agent-os-roadmap.md`
-
-Don't prefix with dates. The `created:` timestamp lives in compiled artefacts; raw files have no frontmatter and don't need a date in the filename.
-
-If a file with that slug already exists in `/sdlc/raw/`, append a short qualifier rather than overwriting: `moltbot-engagement-thoughts-2.md`, `moltbot-engagement-thoughts-followup.md`. Never overwrite raw material silently.
-
-### 3. Write the content verbatim
-
-Write exactly what the operator provided. No reformatting. No structure imposed. No frontmatter. No tagging.
-
-If the operator's input has typos, leave them. If it's stream-of-consciousness, keep it that way. If it's a chat transcript with names and timestamps, preserve them.
-
-The only adjustment allowed: if the operator pasted text that's clearly machine-mangled (escape characters from a terminal, broken line endings), gently normalise to readable markdown. This is a fidelity-to-intent fix, not a content edit.
-
-### 4. Report and check the threshold
-
-After writing, report briefly:
-
-> Captured to `/sdlc/raw/<filename>.md`.
-
-Then count the files in `/sdlc/raw/`. If the count is over 20:
-
-> `/sdlc/raw/` has <N> items. Worth a compile pass when you have ten minutes.
-
-20 is the SDLC's threshold. Past that, raw stops being an inbox and starts being a junk drawer.
-
-## Hard rules
-
-- Never summarise the captured material. Verbatim or nothing.
-- Never restructure or reformat content (markdown normalisation of obviously-mangled input is the only exception).
-- Never add frontmatter to raw files. Raw is unstructured by design.
-- Never overwrite an existing raw file. Use a qualifier in the new filename.
-- Never delete from `/sdlc/raw/`. Only `ri-compile` deletes raw, and only after producing a compiled artefact that references it.
-- Never refuse to capture. Raw accepts anything.
-- Always count `/raw/` after writing and prompt to compile if over 20.
-
-## What the operator decides
-
-- What gets captured
-- When to compile what's been captured
-- Whether to override the proposed filename
-
-## What this skill does without re-asking
-
-Writes the file, names it sensibly, checks the threshold, reports. No shape decisions, no content decisions.
+- Capture never deletes from `/sdlc/raw/`. Only `ri-compile` removes raw files, and only after an artefact references them.
+- Capture accepts anything. It doesn't judge whether material is worth keeping — that decision is compile's, with the operator.

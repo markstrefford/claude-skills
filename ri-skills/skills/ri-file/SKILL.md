@@ -1,216 +1,128 @@
 ---
 name: ri-file
-description: File session outputs back to /sdlc/docs/ when work produced architectural decisions, runbook updates, strategy shifts, or architecture facts worth keeping. Distinct from ri-compile (which transforms raw material into shape); this skill captures emergent outputs from a working session and turns them into doc artefacts. Triggers on explicit slash command (/ri-file), end-of-session prompts ("anything to file", "file the outputs"), references to writing it up ("write up the ADR", "capture that decision"), or invocation by other skills at chain end. Use this skill whenever a session has produced durable knowledge that doesn't yet have a home.
+description: Record durable knowledge a working session produced — architectural decisions (ADRs), runbook updates, strategy shifts, architecture facts, spec divergences — and resolve questions in /sdlc/OPEN.md, in a repo that uses the ri SDLC. Use at session or chain end, or when the operator says "write up that decision", "anything to file", /ri-file.
 model: sonnet
+effort: medium
 ---
 
 # ri-file
 
-Turns session outputs into doc artefacts. ADRs, runbook updates, strategy shifts, architecture facts. The compounding layer of the SDLC — what makes one session useful to the next.
+The compounding layer: what makes one session useful to the next. It records what emerged during work, where `ri-compile` shapes what arrived as input. It is also the one skill that removes questions from `/sdlc/OPEN.md`, as part of resolving them.
 
-## When to run this
+Filler is worse than nothing — it buries the records that matter. If nothing was decided, learned or shifted, say "nothing to file", refresh STATE (`report-only`), and stop.
 
-A session has done work and produced something worth keeping beyond the artefacts in `/work/`. Examples:
+## Config
 
-- "File the outputs"
-- "Write up that decision as an ADR"
-- "Anything worth filing from this session?"
-- "/ri-file"
-- Called at chain end by `ri-execute` or `ri-compile` when those skills touched filing-relevant material
+Read `.ri/config.md` for `project` and `default-rigor`. Tier sets how much is worth filing:
 
-If nothing's worth filing, this skill says so and does nothing. Don't write filler.
+- **Tier 1** — almost never anything. Quick scripts don't produce ADRs. File only if the operator asks.
+- **Tier 2** — selective: ADRs for real architectural choices, runbook updates for operational lessons.
+- **Tier 3** — active: architectural choices are load-bearing and get ADRs, operational lessons on public services get runbook updates, strategy shifts get recorded.
 
-If the operator wants to compile raw material into shape, that's `ri-compile`, not this. This skill captures what emerged during a session, not what arrived as input.
+## Flow
 
-## Read the repo config first
+### 1. Find what is worth filing
 
-Open `.ri/config.md`. The fields that matter:
+| Category | What qualifies |
+| --- | --- |
+| Architectural decision | A choice between concrete options that affects future work — Postgres over SQLite, event-driven over direct calls, a feature deferred for a clear reason. |
+| Runbook update | A procedure ran and diverged from the docs, or a recovery worked, or a new check joined the rotation — something the next person needs. |
+| Strategy shift | The project's direction or positioning changed in a way that affects scope or priorities. |
+| Architecture fact | A long-standing structural truth surfaced or was pinned down — a module boundary, a contract between services, a data flow. |
+| Spec divergence | What got built differs from what the story said; the story is updated to match reality. |
 
-- `project` — used in frontmatter
-- `default-rigor` — informs whether filing is even worth doing for this repo
+Not worth filing: anything already in commit messages, task artefacts or story specs; recaps; generic observations that don't change future work; trivial choices (renaming a variable is not an ADR).
 
-On tier-1 repos, filing is usually skipped. Quick scripts don't generate ADRs or runbook updates. If the session was a one-off tier-1 fix, the answer to "anything to file?" is almost always no.
+### 2. Propose, and wait
 
-## The file flow
-
-### 1. Identify what's worth filing
-
-Scan the session for filing-worthy outputs in five categories:
-
-- **Architectural decision.** A choice was made between concrete options that affects future work. Examples: chose Postgres over SQLite, picked event-driven over direct calls, deferred a feature with a clear rationale.
-- **Runbook update.** An operational procedure ran, succeeded or failed in a notable way, and the next person needs the knowledge. Examples: deployment steps that diverged from docs, a recovery procedure that worked, a new monitoring check that's now part of the rotation.
-- **Strategy shift.** The project's direction or positioning changed in a way that affects scope or priorities.
-- **Architecture fact.** A long-standing structural truth surfaced or was clarified. Examples: module boundary documented, contract between services pinned, data flow mapped.
-- **Spec divergence.** What got built differs from what the story spec said. The story spec gets updated to match reality.
-
-If none of these apply, stop. Report "nothing to file" and update STATE.
-
-Filler outputs to refuse:
-- Restating what's already in commit messages
-- Recapping what the artefact already says
-- Generic observations that don't change future work
-- ADRs for trivial decisions (renaming a variable is not an ADR)
-
-### 2. Propose the filing outputs
-
-Before generating any content, list what you'd file and where:
+List each proposed output and where it goes:
 
 > - Architectural decision → `/sdlc/docs/decisions/<slug>.md` because <one-line reason>
-> - Runbook update → `/sdlc/docs/runbooks/<existing-name>.md` adding section X
+> - Runbook update → `/sdlc/docs/runbooks/<name>.md`, adding section X
 > - Spec divergence → update `/sdlc/work/active/<story-id>.md` outcome from X to Y
 
-Wait for operator approval. The operator may add, remove, or redirect. Don't generate content until shape is approved.
+The operator may add, drop, merge or redirect. Write nothing until they approve.
 
-### 3. Generate the artefacts
+### 3. Write
 
-For each approved item, generate the right structure:
+**Where it goes.** If the work belongs to an epic still in `/sdlc/work/active/`, put decision, runbook, strategy and architecture drafts alongside the epic in `/sdlc/work/active/`; they move to the right `/sdlc/docs/` folder when the epic closes. When unsure, co-locate — moving later is cheap, splitting an epic's material across folders mid-flight is not.
 
-**Architectural decisions (ADRs):**
+**ADR.**
 
 ```yaml
 ---
-id: <slug>                # short descriptive slug, e.g. sdlc-store-lifecycle (no numeric prefix)
+id: <slug>                # descriptive, no numeric prefix (e.g. sdlc-store-lifecycle); never changed once written
 kind: decision
 project: <from config>
-area: [<module(s)>]       # the code module(s) this decision touches, so it can be found by the code it concerns. Stack-relative, module granularity: a Python module/package, a JS/React top-level module or component, or a skill/agent here. List more than one when the decision spans them; go finer than a module (a file) only when the change genuinely is one file. Not an epic-id — epics stack over the same code.
-sources: [<where this came from — task id, story id, raw note, session>]
+area: [<module(s)>]       # the code the decision concerns, so it can be found from that code
+sources: [<task id, story id, raw note, or session>]
 created: <today>
 updated: <today>
 verified-on: <today>
 ---
 ```
 
-Body:
+`area:` uses the stack-relative module (a Python module or package, a JS/React top-level module or component, a skill or agent). List several when it spans them; go down to a single file only when the change genuinely is one file. Never an epic id — many epics stack on the same code.
 
 ```markdown
-# <Title in operator-grammar>
+# <Title in operator grammar>
 
 ## Status
 Accepted
 
 ## Context
-<What was the situation. Operator-grammar. The decision made sense because of these surrounding facts.>
+<The situation, in operator grammar: the facts that made the decision make sense.>
 
 ## Decisions in plain terms
-<The lead section. Each decision as one line: the call plus its consequence, in
-operator/architect grammar — never method names, schema fields, or phase slots.
-A single-decision ADR is one line; a multi-decision ADR is one line per decision
-(D1..DN), in the same order as the engineering detail below. This section leads
-so the ADR reads at architect altitude before any code-level detail. Example:
-"Read the shocks already in the config; don't redesign the format - cheap and
-safe, and the real calibrated events finally render as timeline markers.">
+<One line per decision — the call and its consequence, in architect grammar, no
+method names or schema fields. One line for a single decision; D1..DN for
+several, in the same order as below. Example: "Read the shocks already in the
+config; don't redesign the format — cheap and safe, and the real calibrated
+events finally render as timeline markers.">
 
 ## Decision(s)
-<The engineering detail, grounded in the code/data. One ## Decision section for
-a single call, or ### D1..DN subsections for a multi-decision ADR. State what
-was chosen, not every alternative.>
+<The engineering detail, grounded in the code or data: one section, or ### D1..DN.
+State what was chosen, not every alternative.>
 
 ## Consequences
-<What changes downstream. What this commits us to. What it rules out. What still depends on follow-up.>
+<What changes downstream, what it commits us to, what it rules out, what still needs follow-up.>
 
 ## Alternatives considered
-<If meaningful, the options that weren't chosen and why. One paragraph each, no more.>
+<If meaningful: the options not chosen and why, a paragraph each at most.>
 ```
 
-The Context, Decisions-in-plain-terms, and Consequences sections are
-operator-grammar — they explain the trade-off at architect altitude. The
-engineering detail lives only in the Decision(s) and Alternatives sections, below
-the plain-terms lead. The plain-terms section is not optional: a decision record
-only a developer can parse has failed at being a record. The test is whether the
-operator, reopening it cold months later, knows what was decided and why without
-reading the engineering detail.
+Context, Decisions in plain terms, and Consequences are written for the operator. Engineering detail lives only in Decision(s) and Alternatives. The plain-terms section is required: the test is whether the operator, reopening the ADR months later, knows what was decided and why without reading the engineering detail.
 
-**Runbook updates:**
+**Runbook.** To update one, read it first and match its style; add the section where it fits; set `verified-on:` to today. A new runbook uses the ADR frontmatter with `kind: runbook` and no `area:`, and its body covers: when it applies, the procedure as numbered steps, what success looks like, what failure looks like, and escalation if it fails.
 
-If updating an existing runbook, read it first to match its style and format. Add the new section at the appropriate place. Update the runbook's `verified-on:` field to today.
+**Strategy.** Narrative paragraphs in operator grammar throughout — someone will read it months later without the code in front of them. Frontmatter as for a runbook, `kind: strategy`.
 
-If creating a new runbook, use this shape:
+**Architecture.** A structural fact, often a diagram described in prose, plus what it means for future work. `kind: architecture`.
 
-```yaml
----
-id: <slug>
-kind: runbook
-project: <from config>
-sources: [<where this came from>]
-created: <today>
-updated: <today>
-verified-on: <today>
----
-```
+**Spec divergence.** Update the diverged section of the story (Outcome, Acceptance, or wherever it is), and add `## Divergence from compile <today>` with a paragraph on why what was built differs from what was specified. Whether the divergence is genuine or a mistake to rework is the operator's call.
 
-Body: title, when this runbook applies, the procedure as numbered steps, what success looks like, what failure looks like, escalation if it fails.
+### 4. Approve, commit, hand off
 
-**Strategy entries:**
+Show the operator the written content before committing. They approve the substance as well as the shape — an ADR or strategy entry is a statement in their name.
 
-Narrative paragraphs explaining the strategic position. Operator-grammar throughout — this is the kind of doc Mark will read months later and need to understand without code context. Frontmatter same shape as runbook but `kind: strategy`.
-
-**Architecture entries:**
-
-A structural fact about the system. Often a diagram description in prose, plus the consequences for future work. Frontmatter `kind: architecture`.
-
-**Spec divergence updates:**
-
-Open the story spec in `/work/active/`. Update the Outcome, Acceptance, or whichever section diverged. Add a note in the story body: `## Divergence from compile <today>` with a one-paragraph explanation of why what got built differs from what was specified.
-
-### 4. Co-located drafts during in-flight epics
-
-If an epic is in flight in `/work/active/`, drafts of architecture, decision, runbook, or strategy artefacts produced as part of that epic cluster alongside the epic in `/work/active/`, not in `/docs/`. They move to `/docs/<right-folder>/` when the epic moves to `/work/done/`.
-
-If you're filing during an active epic, check whether the output should be co-located (during epic) or in /docs/ (post-epic). When uncertain, co-locate — moving later is cheap, separating across folders mid-epic is friction.
-
-### 5. Commit
-
-One commit per session of filing, atomic. Commit message names what was filed: `file: 0042-postgres-over-sqlite ADR, runbook deploy-checklist update`.
-
-Doc-only changes to `/docs/` land directly on `main`. Spec divergence updates to `/work/active/` artefacts also land on `main` when they're doc-only.
-
-### 6. STATE update
-
-Hand off to `ri-state` at the end. The newly filed artefacts will appear in the next STATE regeneration.
+One commit for the session's filing, naming what was filed: `file: postgres-over-sqlite ADR, deploy-checklist runbook update`. Doc-only changes — to `/sdlc/docs/`, and doc-only divergence updates in `/sdlc/work/active/` — land on `main`; with `landing: pull-request` in config, on a short `sdlc/file-<slug>` branch opened as a pull request. When another skill invoked this one mid-chain, commit on the branch that chain is on. Then refresh STATE through `ri-state` in `report-only` mode — unless another skill invoked this one as part of its chain, in which case that skill refreshes STATE at its own end.
 
 ## Resolving an open question
 
-`ri-file` owns resolving an entry in `/sdlc/OPEN.md` and draining it from the queue. Ownership across the skills is unambiguous: the acting skills (`ri-compile`, `ri-plan`, `ri-execute`) only ever **append** questions; `ri-state` **never touches** `OPEN.md`; `ri-file` is the one skill that **removes** an entry, and only as part of resolving it.
+The acting skills (`ri-compile`, `ri-plan`, `ri-execute`) only append to `/sdlc/OPEN.md`. `ri-state` only counts it. This skill is the only one that removes an entry, and only by resolving it — so a resolved question never lingers and an unresolved one never disappears.
 
-Trigger: the operator asks to resolve a question, or another skill hands `ri-file` a resolvable one.
+Triggered when the operator asks to resolve a question, or another skill hands one over.
 
-1. **Read** the question and its tags (the work tag and the module-area tag).
-2. **Propose the disposition** — one of: *durable* (a lasting call worth recording), *becomes-work* (the answer is a piece of work to do), or *trivial* (answered, nothing lasting to keep).
-3. **Escalate to the operator.** `ri-file` proposes; the operator decides the disposition. `ri-file` does the bookkeeping, not the judging.
-4. **Drain** in the same step, per the operator's call:
-   - *durable* → generate the ADR via the decision path above (area-tagged, slug id, durability bar), then delete the `OPEN.md` line.
-   - *becomes-work* → hand the question to `ri-compile` as source material so it shapes and routes the backlog-or-active item (that routing is `ri-compile`'s owned logic — do not re-implement it here), then delete the line once the work item exists.
-   - *trivial* → delete the line only.
+1. Read the question and its tags (the work id and the `area:`).
+2. Propose a disposition: **durable** (a lasting call worth a record), **becomes-work** (the answer is something to do), or **trivial** (answered, nothing lasting).
+3. The operator decides. You do the bookkeeping, not the judging.
+4. Drain it in the same step:
+   - durable → write the ADR as above, then delete the line;
+   - becomes-work → hand the question to `ri-compile` as source material (it owns routing to backlog or active), then delete the line once the work item exists;
+   - trivial → delete the line. Trivial answers don't become ADRs.
 
-The line always leaves the queue on resolution, so a resolved question never lingers. Commit the resolution (the decision or work item, plus the `OPEN.md` removal) together.
+Commit the resolution and the `OPEN.md` removal together, landing as above.
 
-## Tier sensitivity
+## Boundaries
 
-**Tier 1:** Filing is usually skipped. Quick scripts don't produce ADR-worthy work. If the operator explicitly asks to file something from tier-1 work, do it, but default to "nothing to file."
-
-**Tier 2:** Selective filing. ADRs for real architectural choices, runbook updates for operational learnings. No filler.
-
-**Tier 3:** Active filing. Architectural choices on tier-3 are load-bearing and should produce ADRs. Operational learnings on public-deploy services should produce runbook updates. Strategy shifts get captured. The compounding effect matters most at this tier.
-
-## Hard rules
-
-- Never file filler. If nothing was decided, learned, or shifted, write nothing.
-- Never duplicate content already in commit messages, task artefacts, or story specs.
-- Never write an ADR for a trivial decision. ADRs are for choices that affect future work — durable, consequential calls. Trivial closes, including a resolved open question that established nothing lasting, die unrecorded rather than becoming filler records.
-- Never let operator-grammar leak below architect altitude in Context, Decision, or Consequences. Implementation detail belongs in Alternatives or stays out.
-- Never record an ADR's decisions without a plain-terms lead — each decision as call + consequence, one line, operator-grammar, before any engineering detail. A multi-decision ADR (D1..DN) gets one plain-terms line per decision. A decision record only a developer can parse has failed at being a record.
-- Never edit `CLAUDE.md`, `~/.claude/CLAUDE.md`, or any `.ri/config.md` without explicit operator approval. These encode opinions and must sound like the operator.
-- Never put strategy or architecture facts directly in `/docs/` if the originating epic is still in `/work/active/`. Co-locate first, move at epic close.
-- Never edit an artefact's `id` field once written.
-
-## What the operator decides
-
-- Whether each proposed filing is worth doing
-- Whether to merge, split, or redirect the proposed outputs
-- Final approval before file moves and commits
-- Whether a spec divergence is genuine (and the spec updates) or a mistake (and the build gets reworked)
-- Any CLAUDE.md or config update — the skill drafts, the operator approves and edits
-
-## What this skill does without re-asking
-
-Scans the session for filing-worthy outputs, proposes shape, generates artefacts on approval, handles co-location for in-flight epics, commits, hands off to ri-state. The operator approves the shape and the substance; the file moves are mechanical.
+- `CLAUDE.md`, `~/.claude/CLAUDE.md` and `.ri/config.md` are edited only with the operator's explicit approval. They encode the operator's opinions and must sound like the operator; draft the change and let them approve it.

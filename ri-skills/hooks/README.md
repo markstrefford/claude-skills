@@ -14,6 +14,10 @@ Claude Code `PreToolUse` hooks that ship with `ri-skills`. Global (user-level), 
 
 ### Install
 
+**Plugin install:** the hook ships with the plugin and is off by default. Turn it on in `/plugin` → Installed → ri-skills → Configure options → `cd_guard`. Nothing below applies.
+
+**Clone install:**
+
 1. Copy the script to your user hooks directory:
 
    ```bash

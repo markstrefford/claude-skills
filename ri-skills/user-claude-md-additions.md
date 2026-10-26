@@ -1,16 +1,8 @@
-# Template: ~/.claude/CLAUDE.md additions
+# Example: ~/.claude/CLAUDE.md additions
 
-This is the user-level standing behaviour `ri-skills` assumes is in place. Append the section below to your `~/.claude/CLAUDE.md` (create the file if it doesn't exist).
+Optional. This is the user-level standing behaviour `ri-skills` was built alongside: how decisions are pitched, navigation, and session hygiene. It encodes one operator's preferences, and some of it (the hygiene thresholds) is policy a team should set for itself. The skills work without it.
 
-The defaults are operator-style: consequences over implementation detail, you trust the tooling to get the code right, you don't review code line by line. If you do review line by line and want method-level explanations, adjust accordingly.
-
-To install:
-
-```bash
-cat user-claude-md-additions.md >> ~/.claude/CLAUDE.md
-```
-
-Then edit to suit. The two places worth customising are the concrete example in the "architect level" section (see the TODO marker below) and the session hygiene thresholds if your context preferences differ.
+To use it, read it, take what fits, and add it to your `~/.claude/CLAUDE.md` in your own words. The two places worth customising are the concrete example in the "architect level" section (see the TODO marker below) and the session hygiene thresholds.
 
 ---
 
@@ -32,7 +24,7 @@ Default to this level. If I want more detail I'll say "show me the detail." If y
 
 The working directory persists across Bash calls, and you're at the repo root almost always — so you don't need to `cd` for in-repo work. Never prepend `cd <repo-root> && …` to a command; run it directly. To act in a subdirectory, prefer an absolute path over a `cd`. Only `cd` outside the current repo when a task genuinely needs it (e.g. searching another checkout) — that prompts for permission on purpose: I want to know when you leave the repo.
 
-This is enforced by the `cd-repo-guard.sh` PreToolUse hook (see `ri-skills/hooks/`): `cd` anywhere inside the current repo runs without a prompt; `cd` outside it asks. The hook discovers the repo root at runtime from git, so it works in every repo with no per-repo configuration.
+If the `cd-repo-guard.sh` PreToolUse hook is installed (see `ri-skills/hooks/`; opt-in under the plugin), it enforces this: `cd` anywhere inside the current repo runs without a prompt; `cd` outside it asks. The hook discovers the repo root at runtime from git, so it works in every repo with no per-repo configuration.
 
 ## Session hygiene
 
