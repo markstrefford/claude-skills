@@ -56,7 +56,7 @@ Write "Nothing to report." for an empty section.
 
 **Architectural drift.** Conflicts with the architecture docs or an ADR; new dependencies, modules or coupling the plan didn't include; boundaries crossed that should have stayed clean (for example, pre-migration modules importing post-migration ones).
 
-**Code smells.** Dead, commented-out or debug code; TODOs without context; names that don't match the spec's domain language; functions doing more than the task asked; errors swallowed silently; hardcoded values that should be configuration.
+**Code smells.** Dead, commented-out or debug code; TODOs without context; names that don't match the spec's domain language; functions doing more than the task asked; errors swallowed silently; hardcoded values that should be configuration. Include security smells: input reaching a query, shell command, file path or template unvalidated; a new route or handler without the auth check its neighbours have; secrets in code, config or logs; personal data logged; a broad exception that hides an auth failure. A security smell with a plausible path from outside input is FAIL. The full security review happens at story close; your job is to catch the obvious ones while the task is still small.
 
 ## Verdict
 

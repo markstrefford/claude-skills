@@ -16,6 +16,7 @@ Each skill and agent pins a model and an effort level in its frontmatter. The pi
 | `ri-execute` | opus | high | Implements and runs long chains |
 | `verifier` | sonnet | high | Checks work against a spec; runs often |
 | `senior-staff-engineer` | opus | high | Architectural review; runs rarely |
+| `security-reviewer` | sonnet | high | Works through fixed OWASP lists; runs at plan, story and epic close. `security-review: full` adds `/security-review` in the session model |
 
 ## How the pins behave
 

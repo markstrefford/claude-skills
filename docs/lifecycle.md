@@ -42,6 +42,7 @@ flowchart LR
     v -->|fail| stop[Stop and report]
     next -.->|last task of the story| gate{Story-close gate}
     gate -->|clean| land[Mark story done, land it]
+    gate -->|advisory findings| open[Findings to OPEN.md] --> land
     gate -->|blocked| fix[New task work]
 ```
 
@@ -73,7 +74,7 @@ Marking done means setting `status: done`, refreshing `updated:`, moving the fil
 | Level | Done when |
 | --- | --- |
 | Task | The verifier passes, with or without notes (tier 2 and 3). At tier 1 without a verifier: implemented, tests passing, committed. A `review` task becomes done when you approve it. |
-| Story | Every task under it is done, and the story-close gate is clean or not required |
+| Story | Every task under it is done, and the story-close gate is clean, advisory or off |
 | Epic | Every story in its roadmap is done, on `main` or the current branch, and nothing under it remains in `active/` or `backlog/` |
 
 When an epic closes, any decision, runbook, strategy or architecture drafts kept beside it move to `docs/`, and `ri-archive` collapses its files into one record. Archive and filing run before the story lands, so their commits travel with it. Under `autonomy: auto` they wait for you as lines in `OPEN.md` instead, and the story lands without them.

@@ -16,9 +16,10 @@ stacks:
 version-pairing: backend/pyproject.toml and backend/version.json carry the same semver; bump together, never let them drift
 public-deploy: true
 security-gate: required   # scoped by the footprint map below
+security-review: full     # OWASP checklist plus /security-review at story close; owasp for the checklist alone
 
 # Footprint map (optional) — which code is externally reachable vs internal-only.
-# At story close /code-review always runs; /security-review runs only when the
+# At story close /code-review always runs; the security review runs only when the
 # story's changed files touch a `deployed` path. Most-specific rule wins (by path
 # depth); an unmatched path defaults to deployed; omitting the whole block runs the
 # security review on everything, exactly as before.
@@ -26,7 +27,7 @@ footprint:
   internal:            # only ever run on our machines; no external surface
     - backend/analysis/**
     - tests/**
-  deployed:            # externally reachable; /security-review required
+  deployed:            # externally reachable; security review required
     - backend/**
     - web/**
 
@@ -61,12 +62,14 @@ How the skills behave at tier-3:
 - ri-do refuses tier-3 work by default; operator must explicitly override
   per-task if they want the lite path
 
-`security-gate: required` is live: at story close `ri-execute` runs the
-governance gate over the story branch before the story is merge-ready.
-`/code-review` always runs; `/security-review` runs only when the story's
-changed files touch a `deployed` path in the optional `footprint:` map above
-(omit the map to run it on everything). Drop the `security-gate` line to
-disable the gate entirely for a repo.
+`security-gate: required` is live. Sensitive stories get a security review of
+their plan. At story close `ri-execute` runs the governance gate over the story
+branch: `/code-review` always, and the security review (the OWASP checklist plus
+`/security-review`, from `security-review: full`) when the story's changed files
+touch a `deployed` path in the optional `footprint:` map above (omit the map to
+run it on everything). When the epic closes, its combined change gets one more
+OWASP checklist review, which never blocks. `security-gate: advisory` keeps the reviews
+but stops them blocking; `off` turns them off.
 
 `version-pairing` and `public-deploy` are still advisory — repo facts the
 skills read but don't yet enforce. Keep them documented and ready to wire

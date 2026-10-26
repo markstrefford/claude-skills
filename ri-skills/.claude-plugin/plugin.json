@@ -1,7 +1,7 @@
 {
   "name": "ri-skills",
   "displayName": "ri SDLC",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "A file-based software development lifecycle for Claude Code: capture, compile, plan, execute, file, state and archive, with fresh-context review and ceremony set per repo by risk tier.",
   "author": {
     "name": "Mark Strefford",

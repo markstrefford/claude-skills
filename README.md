@@ -5,7 +5,7 @@ A software development lifecycle for [Claude Code](https://code.claude.com/docs)
 - **Filesystem as source of truth.** No tracker. Work items are markdown with YAML frontmatter, moving through `raw → backlog → active → done → archive`. State is derived from the folders, not tracked separately.
 - **Thin compile, grounded plan.** Shaping an idea never invents engineering detail. Task specs are written only after the code they touch has been read.
 - **Two grammars.** What the operator reads (outcome, scope, acceptance, roadmap) is in plain words about consequences. Test specs and implementation notes sit below it, for the model.
-- **Ceremony proportional to risk.** Tier 1 is "just do it and commit". Tier 3 is tests first, a fresh-context verifier on every task, architectural review at planning, and a security gate when a story closes.
+- **Ceremony proportional to risk.** Tier 1 is "just do it and commit". Tier 3 is tests first, a fresh-context verifier on every task, architectural review at planning, a security review of sensitive plans, a security gate when a story closes, and a security review across the epic when it closes.
 - **Fresh-context review.** The verifier and the senior-staff reviewer are briefed with an id and a commit, never with the implementer's reasoning.
 
 ## How it flows
@@ -59,6 +59,7 @@ Jira would own the epics, the numbering and the status. The repo holds the plan,
 | --- | --- |
 | `verifier` | Reviews a finished task against its spec and runs the tests |
 | `senior-staff-engineer` | Reviews an epic, story or task plan before code is written |
+| `security-reviewer` | Reviews a sensitive story's plan for threats, and a story's or epic's change against the OWASP lists |
 
 ## Quickstart
 
@@ -101,7 +102,7 @@ At the end, `STATE.md` says where things stand and `OPEN.md` holds anything wait
 | [Lifecycle](docs/lifecycle.md) | Which verb moves what, and when work counts as done |
 | [Configuration](docs/configuration.md) | Every `.ri/config.md` key |
 | [Artefacts](docs/artefacts.md) | Frontmatter, kinds, ids and statuses |
-| [Governance](docs/governance.md) | What each tier turns on, and the story-close gate |
+| [Governance](docs/governance.md) | What each tier turns on, the security reviews, and the story-close gate |
 | [Models and cost](docs/models-and-cost.md) | Which model each skill runs on, and how to change it |
 | [Team adoption](docs/team-adoption.md) | Settings for more than one person |
 | [Where Jira fits](docs/jira.md) | Which skills a Jira team would use, and what would go to Jira |

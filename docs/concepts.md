@@ -12,7 +12,7 @@ AI-assisted development tends to fail in one of two ways. With no structure, wor
 
 **Two grammars.** Operator grammar is plain words about consequences: what changes, what it costs, what it rules out. Engineering grammar is test names, signatures, file paths and schemas. Everything the operator reads or approves is in operator grammar. Engineering grammar lives below it in the same file, in the test specification and implementation notes, where execution needs it.
 
-**Ceremony proportional to risk.** Each repo declares a tier. The tier decides whether tests come first, whether the verifier runs, whether a reviewer checks the plan, and whether a story faces a security gate before it lands. See [governance](governance.md).
+**Ceremony proportional to risk.** Each repo declares a tier. The tier decides whether tests come first, whether the verifier runs, whether a reviewer checks the plan, and how hard security is checked at plan time, story close and epic close. See [governance](governance.md).
 
 **Fresh-context review.** A reviewer who has heard the implementer's reasoning tends to confirm it. The verifier is briefed with a task id and the commit before work started; the senior-staff reviewer with an artefact path. Each reads the spec and the code cold.
 
