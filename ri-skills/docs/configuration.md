@@ -1,6 +1,6 @@
 # Configuration
 
-Each repo has a `.ri/config.md`: YAML frontmatter holding the settings, then free prose for anything the team wants Claude to know about the repo. Start from one of the [examples](../ri-skills/examples/). A repo with no config file is treated as tier 3, and the skills say so.
+Each repo has a `.ri/config.md`: YAML frontmatter holding the settings, then free prose for anything the team wants Claude to know about the repo. Start from one of the [examples](../examples/). A repo with no config file is treated as tier 3, and the skills say so.
 
 ## Keys
 

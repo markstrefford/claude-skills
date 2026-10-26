@@ -13,5 +13,5 @@
 | Commits to `main` are rejected | Branch protection with `landing: merge` | Set `landing: pull-request` |
 | Pull requests aren't opened | `gh` missing or not authenticated | `gh auth login` |
 | Two branches conflict in `OPEN.md` | No union merge for the file | Add `sdlc/OPEN.md merge=union` to `.gitattributes` |
-| The cd guard doesn't fire | Plugin: `cd_guard` is off. Clone: the hook isn't registered, or settings weren't reloaded | Turn the option on, or follow [the hook README](../ri-skills/hooks/README.md); open `/hooks` once to reload |
+| The cd guard doesn't fire | Plugin: `cd_guard` is off. Clone: the hook isn't registered, or settings weren't reloaded | Turn the option on, or follow [the hook README](../hooks/README.md); open `/hooks` once to reload |
 | A skill runs on a different model than your session | Intended: the pin applies for that turn only | See [models and cost](models-and-cost.md) |
