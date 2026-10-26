@@ -1,101 +1,73 @@
 ---
 name: ri-archive
-description: Consolidate /sdlc/work/done/ into one record per completed epic, so a repo doesn't accumulate a file per task forever. Triggers on explicit slash command (/ri-archive), complaints about the done folder ("done/ is huge", "hundreds of files in done", "tidy up done", "consolidate the archive"), or natural language signalling the work tree has outgrown itself. Reads the closed artefacts under an epic and writes a single record carrying its stories, its critical tasks, what was done, the decisions that steered it, and the commits — then removes the files it replaced. Use this skill whenever /sdlc/work/done/ has grown past being readable.
-model: opus
+description: Collapse /sdlc/work/done/ from one file per task into one record per closed epic — its stories, critical tasks, steering decisions and commits — then remove the files it replaced, in a repo that uses the ri SDLC. Use when an epic closes, or when the done folder has grown past being readable — "tidy up done", /ri-archive <epic>.
+model: sonnet
+effort: high
 ---
 
 # ri-archive
 
-Collapses `/sdlc/work/done/` from one file per task into one record per epic.
+Per-task files are the wrong granularity for the audit trail. They accumulate without limit, get pulled into agent context, and clutter the tree, while what anyone needs later is coarser: what the epic was, what shipped, and why it went the way it did.
 
-The done tree is the audit trail, and per-task files are the wrong granularity for it. They accumulate without bound, load into agent context, and clog the repo tree — while the thing anyone actually needs later is coarser: what the epic was, what shipped, and why it went that way.
+Closing individual tasks is `ri-execute`; filing decisions to `/sdlc/docs/` is `ri-file`.
 
-## When to run this
+## Gather
 
-`/sdlc/work/done/` has more files than anyone will read. Examples:
+1. Read `.ri/config.md` for `project:`. If it is missing, infer it from existing frontmatter and say so.
+2. List `/sdlc/work/done/`, noting each artefact's `id`, `kind`, `parent`, `children`, `updated` and any `commits:`.
+3. List `/sdlc/work/active/` and `/sdlc/work/backlog/`. An epic with any descendant still there is not archivable — archiving it would strip live work of its context. Skip it and say why.
+4. Leave alone anything already consolidated (`kind: archive`) and pre-SDLC bulk imports (`done-historical.md` and similar).
 
-- "done/ has hundreds of files in it"
-- "tidy up the done folder"
-- "/ri-archive e02"
-- an epic just closed and its stories and tasks are all sitting in done/
+The working tree must be clean before you start, apart from an uncommitted `STATE.md`, so the deletions can be reviewed as one diff.
 
-Not for: closing individual tasks (that's `ri-execute`), or filing decisions to `/docs/` (that's `ri-file`).
+## Group
 
-## Read the repo first
+- **By epic.** Follow `parent:` up from each task and story. `parent:` is authoritative; fall back to the id prefix (`e02-s07-t21`) only when it is missing.
+- **Orphans** with no epic ancestor go into one period record, `done/archive-<YYYY>-h<1|2>.md`, rather than a made-up parent.
 
-1. Read `.ri/config.md` for `project:`. If absent, infer from existing frontmatter and warn.
-2. List `/sdlc/work/done/`. For each artefact note `id`, `kind`, `parent`, `children`, `updated`, and any `commits:`.
-3. List `/sdlc/work/active/` and `/sdlc/work/backlog/`. **Any epic with a descendant still in active or backlog is not archivable** — skip it and say so.
-4. Note any file that is already a consolidated record (`kind: archive`) or a pre-SDLC bulk import (`done-historical.md` and similar). Leave both alone.
+An epic is archivable when it is `status: done`, every story in its roadmap has a file in `/sdlc/work/done/`, and so does every other descendant. A roadmap line with no story file is a story still to do. When invoked on a story branch, a story in done on `main` counts too: it may have landed after the branch was cut.
 
-## Grouping
+Report each archivable epic with the number of files it would replace, and each skipped epic with the reason. The operator approves the grouping — whether to archive now, whether the orphan bucket is right, whether the done tree is even big enough to bother — before anything is written.
 
-Group done artefacts into archivable sets by lineage:
+## The record
 
-- **By epic.** Follow `parent:` up from each task and story. The hierarchical id (`e02-s07-t21`) is a strong hint but `parent:` is authoritative — trust the frontmatter, fall back to the id prefix only when `parent:` is missing.
-- **Orphans.** Artefacts with no epic ancestor are common (standalone stories, one-off tasks). Collect them into a single period record — `done/archive-<YYYY>-h<1|2>.md` — rather than forcing a false parent.
+One file per epic, about a screen long however many files it replaces; if it runs past two screens it is carrying detail that should have gone.
 
-An epic is archivable when every descendant is in `/work/done/` (or `/work/dropped/`) and the epic itself is `status: done`.
+- **The epic** and that it closed, with the span from first created to last updated.
+- **Its stories**, a heading each, with what it delivered in two or three sentences of operator grammar.
+- **Critical tasks only**: those that changed direction, took several attempts, or carry a fact worth grepping for. A task that went in cleanly gets no line; its commit is its record. Ask the operator about borderline ones.
+- **The decisions that steered it, and why** — the most important part. Anything that reversed a position, ruled an approach out, or would surprise someone reading the code later.
+- **Gotchas** — data identity traps, environment quirks, anything that bit twice.
+- **Commits** — the final merge per story is enough. A story not yet merged (when this runs at epic close) is recorded by its branch name.
 
-## What the record contains
+Leave out acceptance criteria, test plans, implementation notes, out-of-scope sections and per-task narrative; they served the live work. When trimming for length, drop process detail, never a decision or a gotcha. If a constituent is too thin to summarise, say so rather than invent a summary.
 
-One file per epic, replacing every file it consolidates. Keep it short — this is a record, not a reconstruction.
+```yaml
+---
+id: <epic-id>
+kind: archive
+project: <from config>
+status: done
+replaces: [<id of every consolidated artefact>]
+span: 2026-05-05..2026-08-08
+created: <the epic's original created date>
+updated: <today>
+tags: [<union of the constituents' tags>]
+---
+```
 
-- **The epic**, and the fact it closed, with dates spanning first-created to last-updated.
-- **Its stories, at story level.** One heading each, with what it delivered in two or three sentences of operator grammar.
-- **Only the critical tasks named.** The ones that changed direction, took several attempts, or carry a fact worth grepping. A task that went in cleanly gets no line — its commit is the record.
-- **The decisions that steered it, and why.** The load-bearing part. Anything that reversed a position, ruled an approach out, or would surprise someone reading the code later.
-- **Gotchas worth keeping** — data identity traps, environment quirks, anything that bit twice.
-- **Commits.** The final merge per story is enough. Don't enumerate every commit.
+`replaces:` keeps every old id greppable after its file is gone.
 
-Explicitly not: acceptance criteria, test plans, implementation notes, out-of-scope sections, per-task narrative. Those served their purpose while the work was live and die with the files.
+## Flow
 
-Target roughly one screen per epic regardless of how many files it replaces. If it runs past two, it's carrying detail that should have been dropped.
+1. Group and report, then get approval on the grouping.
+2. Write each record from the full text of every constituent — the decisions are in the bodies, not the ids and headings.
+3. Verify: every constituent id is in `replaces:`, and every decision in a constituent body is in the record or was dropped on purpose.
+4. Only then remove the consolidated files, with `git rm` (or `rm` then `git add -A` for untracked files). Writing first and deleting second is what makes the collapse safe.
+5. Commit once per epic, naming the epic and how many files it collapsed. When `ri-execute` invoked this at epic close, commit on its story branch, so the record lands with the story. Otherwise commit on `main`, or with `landing: pull-request` in config, on a short `sdlc/archive-<epic>` branch opened as a pull request.
+6. Refresh STATE through `ri-state` in `report-only` mode, once, at the end — unless `ri-execute` invoked this at epic close, in which case it refreshes STATE at the end of its chain.
 
-### Frontmatter
+## Boundaries
 
-    ---
-    id: <epic-id>
-    kind: archive
-    project: <from config>
-    status: done
-    replaces: [<ids of every consolidated artefact>]
-    span: 2026-05-05..2026-08-08
-    created: <original epic created>
-    updated: <date of archiving>
-    tags: [<union of the constituents' tags, deduped>]
-    ---
-
-`replaces:` is what makes the collapse reversible in principle and greppable in practice — the old ids stay findable even though the files are gone.
-
-## The flow
-
-1. **Group** and report: for each archivable epic, how many files it would replace; which epics are skipped and why.
-2. **Get approval on the grouping** before writing anything. The operator approves the set, not each record.
-3. **Write each record**, reading every constituent file first. Never summarise from ids and headings alone — the decisions are in the bodies.
-4. **Verify before deleting.** Every constituent id appears in `replaces:`, and every decision carried in a constituent body is either in the record or was a deliberate drop.
-5. **Remove the consolidated files** with `git rm`. If a file isn't tracked, plain `rm` and stage with `git add -A`.
-6. **Commit** — one commit per epic, message naming the epic and the file count collapsed.
-7. **Update STATE** via `ri-state` at the end, once.
-
-## Hard rules
-
-- Never archive an epic with a descendant in `/work/active/` or `/work/backlog/`. Live work loses its context.
-- Never delete a constituent file before its record is written and verified. Write first, delete second, in that order, always.
-- Never run against a dirty working tree. The deletions must be reviewable as a single diff against a clean baseline.
-- Never consolidate `/docs/` artefacts. ADRs, runbooks, architecture and strategy are not part of the work tree and are not archived by this skill.
-- Never drop a decision or a gotcha to hit a length target. Drop process detail instead — acceptance criteria, test plans, implementation notes.
-- Never re-archive an existing `kind: archive` record, or touch a pre-SDLC bulk import.
-- Never invent a summary for a story whose file doesn't support one. If a constituent is thin, the record says so rather than filling the gap.
-- Never rewrite git history to remove the old files. They stay reachable; the point is the working tree, not the history.
-
-## What the operator decides
-
-- Which epics to archive now versus leave
-- Whether an orphan bucket is right, or those artefacts should stay individual
-- Whether a task is "critical" enough to name, when it's borderline
-- Whether to archive at all in a repo where the done tree is still small
-
-## What this skill does without re-asking
-
-Groups by lineage, reports the plan, and once the grouping is approved: reads every constituent, writes the records, verifies coverage, removes the replaced files, commits per epic, and refreshes STATE. The operator approves the grouping once; the rest is mechanical.
+- `/sdlc/docs/` is out of scope: ADRs, runbooks, architecture and strategy aren't part of the work tree.
+- Never rewrite git history to remove the old files. The point is a readable working tree; the history stays.

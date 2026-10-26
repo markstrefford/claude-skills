@@ -1,0 +1,15 @@
+{
+  "name": "ri",
+  "description": "The ri SDLC skill set for Claude Code.",
+  "owner": {
+    "name": "Mark Strefford",
+    "url": "https://github.com/markstrefford"
+  },
+  "plugins": [
+    {
+      "name": "ri-skills",
+      "source": "./ri-skills",
+      "description": "Capture, compile, plan, execute, file, state and archive, with fresh-context review and a story-close governance gate."
+    }
+  ]
+}

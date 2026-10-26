@@ -1,103 +1,34 @@
 ---
 name: ri-do
-description: Execute one-shot work without ceremony. No artefact, no plan, no verifier. The tier-1 lite path for content scripts, glue code, doc fixes, quick mechanical changes — anywhere the rebuild cost is trivial and the operator already knows what they want. Triggers on explicit slash command (/ri-do), one-shot phrasing ("just do this", "quick fix", "make this change", "small edit"), or natural language signalling a bounded mechanical task in a tier-1 repo. Use this skill whenever the operator wants something done now and the work is small enough that artefacts and verification would be overhead. Don't ask which verb to use, run.
+description: Do a small, bounded change straight away with no artefact, plan or verifier, in a repo that uses the ri SDLC (has .ri/config.md). Use for tier-1 work and genuinely mechanical changes where the operator already knows what they want — /ri-do, or a one-shot request in such a repo.
 model: sonnet
-
+effort: medium
 ---
 
 # ri-do
 
-The minimum-viable execute path. Skip the artefact, skip the verifier, do the work, commit, done. Tier-1's default execution mode.
+The lite execution path: do the work, commit, done. It exists because artefacts and verification are overhead when a mistake costs a rerun. That only holds while the rebuild cost is trivial, so the tier check is the whole safety mechanism.
 
-## When to run this
+Multi-step or load-bearing work, or work that needs grounding in unfamiliar code, goes to `ri-plan` (a story with structure) or `ri-compile` (raw material that needs shaping).
 
-The operator wants something done now and the work is bounded, small, and mechanical. Examples:
+## Check the tier first
 
-- "Quick fix: change the YouTube ingest path to handle the new file format"
-- "Update the README with the latest setup steps"
-- "Just bump the version in package.json"
-- "/ri-do clean up the old log files in the cron output folder"
-- A tier-1 repo and the request is a single change with no architectural weight
+Read `.ri/config.md`. Ask: if this breaks, how expensive is the rebuild?
 
-If the work is multi-step, load-bearing, or needs grounding against unfamiliar code, this is the wrong skill. Hand off to `ri-plan` (for stories with structure) or `ri-compile` (for raw material that needs shaping).
+| Tier | Typical rebuild cost | ri-do |
+| --- | --- | --- |
+| 1 | Trivial — rerun the script, edit the doc | Default. Use freely. |
+| 2 | Moderate — a user-visible regression, an afternoon to fix | Only for genuinely small mechanical tasks. If it touches several files in unrelated ways or carries architectural weight, push back: it is probably a story. |
+| 3 | Severe — corrupted state, public outage, data loss | Refuse unless the operator explicitly overrides in this session: "This is a tier-3 repo. ri-do skips the plan and the verifier. Override, or take it through ri-compile / ri-plan?" |
 
-## Read the repo config first
+No config: treat as tier 3 and ask before proceeding.
 
-Open `.ri/config.md`. The tier matters more for this skill than for any other:
+Whatever the tier, ri-do is not for architectural work, auth, payment paths, data writes that can't be rolled back, or public security surface. Those need the verifier, so they should be a story.
 
-- **Tier 1:** Default behaviour, use freely.
-- **Tier 2:** Acceptable for genuinely small mechanical tasks. If the work would touch multiple files in unrelated ways, or has architectural implications, push back: this is probably a story, not a do.
-- **Tier 3:** Refuse by default. Tell the operator: "This is a tier-3 repo. ri-do skips the verifier and the plan step. Want to override (set per-task autonomy and proceed) or take it through ri-compile or ri-plan?" Don't proceed without explicit override.
+## Flow
 
-If `.ri/config.md` doesn't exist, default to refusing — operator confirms before this skill runs.
-
-## The flow
-
-### 1. Confirm the scope
-
-State back what you're about to do in one sentence. If the operator's instruction was already crystal clear, this is one line and you proceed. If there's ambiguity, ask one question, then proceed.
-
-### 2. Do the work
-
-Make the change. Write the code, edit the doc, run the command, whatever the operator asked. No artefact in `/work/active/`. No test spec unless the operator explicitly asks for tests. No verifier invocation.
-
-If you discover the work is bigger than it looked (touching unrelated areas, requiring architectural choices, needing tests to be safe), stop and report:
-
-> This is larger than a ri-do task. Want to back out and compile a story, or proceed and accept the ceremony skip?
-
-The operator decides. Don't silently expand scope.
-
-### 3. Handle scope creep
-
-If you notice things that would also benefit from changing (refactors, related fixes, "while I'm here" improvements), do not include them. Capture them as a one-liner in `/sdlc/raw/` via `ri-capture` style — a single file describing what you noticed — and finish what was asked.
-
-The operator can compile those into proper work later. Mixing scope into a ri-do task is how trivial fixes become hour-long sessions and how trust in the lite path breaks down.
-
-### 4. Commit
-
-One commit, meaningful message. No task id (there's no task), but the message should be specific enough to find later:
-
-```
-content: update YouTube ingest to handle .webm files
-docs: README setup steps for the new dev container
-deps: bump axios to 1.7.4 for CVE fix
-```
-
-Tier-1 repos: land directly on `main`. No branch unless the operator asks for one.
-
-Tier-2 repos (the override case): cut a short-lived branch named for the change, merge when done.
-
-### 5. Report
-
-Single line. What was done, where it committed. No long summary. The operator can read the diff if they want detail.
-
-> Updated `pipelines/youtube_ingest.py` to detect .webm. Committed to main.
-
-## Tier sensitivity (the whole point)
-
-This skill exists for tier-1. The whole guard is in step "Read the repo config." If you ever find yourself running ri-do on tier-3 work without explicit override, something has gone wrong.
-
-The mental check: "If this breaks, how expensive is the rebuild?"
-
-- Trivial: rerun the script, edit the doc, redeploy a container. Tier-1, ri-do is fine.
-- Moderate: a feature regressed, users see it, fix takes an afternoon. Tier-2, push back.
-- Severe: state corruption, public outage, data loss. Tier-3, refuse.
-
-## Hard rules
-
-- Never use ri-do for architectural work, auth changes, payment paths, data writes that can't be rolled back, or anything touching public security surface.
-- Never use ri-do on tier-3 work without explicit operator override in this session.
-- Never silently expand scope. Capture extras to raw and finish what was asked.
-- Never run the verifier or senior-staff sub-agent from this skill. If they're needed, this should have been a story.
-- Never create artefacts in `/sdlc/work/active/`. If the work warrants an artefact, this should have been ri-compile or ri-plan.
-- Never commit without a meaningful message.
-
-## What the operator decides
-
-- Whether the work is genuinely ri-do scope or should be promoted to a story
-- Whether to override the tier-3 refusal
-- Whether captured scope-creep observations are worth compiling later
-
-## What this skill does without re-asking
-
-Confirms scope in one sentence, does the work, commits, reports. The operator already said what they wanted; the skill just runs it.
+1. **Confirm scope** in one sentence. If the instruction was clear, that line is enough and you proceed; if it was ambiguous, ask one question.
+2. **Do the work.** No artefact in `/sdlc/work/`, no tests unless asked, no verifier or senior-staff review. If it turns out bigger than it looked — unrelated areas, an architectural choice, tests needed to be safe — stop and ask whether to back out and compile a story or proceed knowingly.
+3. **Hold scope.** Anything else worth doing that you notice goes into a one-line file in `/sdlc/raw/`, not into this change. Mixing extras into the lite path is how a two-minute fix becomes an hour and the operator stops trusting it.
+4. **Commit once**, with a message specific enough to find later: `content: update YouTube ingest to handle .webm files`. Tier 1 lands on `main` unless the operator asks for a branch. At tier 2, or on a tier-3 override, use a short-lived branch named for the change and merge it when done. With `landing: pull-request` at any tier, use the short branch and open a pull request instead of merging.
+5. **Report in one line:** what changed and where it committed.

@@ -12,6 +12,15 @@
 # in-repo cd. It never blocks and never forces a prompt beyond normal behaviour,
 # so a parsing miss degrades to "ask as usual", never to a wrong auto-approve.
 
+# Under a plugin install the guard is opt-in via the cd_guard option; unset
+# counts as off. A manual install has no CLAUDE_PLUGIN_ROOT and always runs.
+if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
+  case "${CLAUDE_PLUGIN_OPTION_CD_GUARD:-false}" in
+    true|1) ;;
+    *) exit 0 ;;
+  esac
+fi
+
 input=$(cat)
 cmd=$(printf '%s' "$input" | jq -r '.tool_input.command // ""')
 

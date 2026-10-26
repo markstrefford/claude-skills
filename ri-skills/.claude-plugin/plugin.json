@@ -1,0 +1,22 @@
+{
+  "name": "ri-skills",
+  "displayName": "ri SDLC",
+  "version": "2.3.0",
+  "description": "A file-based software development lifecycle for Claude Code: capture, compile, plan, execute, file, state and archive, with fresh-context review and ceremony set per repo by risk tier.",
+  "author": {
+    "name": "Mark Strefford",
+    "url": "https://github.com/markstrefford"
+  },
+  "homepage": "https://github.com/markstrefford/claude-skills",
+  "repository": "https://github.com/markstrefford/claude-skills",
+  "license": "MIT",
+  "keywords": ["sdlc", "workflow", "planning", "review", "governance"],
+  "userConfig": {
+    "cd_guard": {
+      "type": "boolean",
+      "title": "Auto-approve cd inside the current repo",
+      "description": "Installs a hook that approves cd commands staying inside the current git repo without a prompt. A cd that leaves the repo still asks. Off by default because it changes permission behaviour.",
+      "default": false
+    }
+  }
+}
